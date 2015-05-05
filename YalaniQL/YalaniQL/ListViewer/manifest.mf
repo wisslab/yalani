@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.kaiec.retro.listview
+OpenIDE-Module-Install: org/kaiec/retro/listview/Installer.class
+OpenIDE-Module-Layer: org/kaiec/retro/listview/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/kaiec/retro/listview/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

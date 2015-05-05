@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <attr name="Menu\BuildProject\position" intvalue="300"/>
+    <attr name="Menu\Help\position" intvalue="1000"/>
+    <attr name="Menu\Module\position" intvalue="700"/>
+    <attr name="Menu\Profile\position" intvalue="500"/>
+    <attr name="Menu\Refactoring\position" intvalue="200"/>
+    <attr name="Menu\RunProject\position" intvalue="400"/>
+    <attr name="Menu\Source\position" intvalue="100"/>
+    <attr name="Menu\Versioning\position" intvalue="600"/>
+    <attr name="Menu\View\position" intvalue="800"/>
+    <folder name="Actions">
+        <folder name="Build">
+            <file name="org-kaiec-retro-listview-ListUIColors.instance">
+                <attr name="delegate" newvalue="org.kaiec.retro.listview.ListUIColors"/>
+                <attr name="displayName" bundlevalue="org.kaiec.retro.listview.Bundle#CTL_ListUIColors"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+            </file>
+        </folder>
+        <folder name="Window">
+            <file name="org-kaiec-retro-listview-ListViewerAction.instance">
+                <attr name="component" methodvalue="org.kaiec.retro.listview.ListViewerTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="org.kaiec.retro.listview.Bundle#CTL_ListViewerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+            <file name="org-kaiec-retro-listview-PicklistAction.instance">
+                <attr name="component" methodvalue="org.kaiec.retro.listview.PicklistTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="org.kaiec.retro.listview.Bundle#CTL_PicklistAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+            <file name="org-kaiec-retro-listview-RecordContextViewerAction.instance">
+                <attr name="component" methodvalue="org.kaiec.retro.listview.RecordContextViewerTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="org.kaiec.retro.listview.Bundle#CTL_RecordContextViewerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Window">
+            <attr name="position" intvalue="900"/>
+            <file name="ListViewerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/org-kaiec-retro-listview-ListViewerAction.instance"/>
+            </file>
+            <file name="PicklistAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/org-kaiec-retro-listview-PicklistAction.instance"/>
+            </file>
+            <file name="RecordContextViewerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/org-kaiec-retro-listview-RecordContextViewerAction.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="ListViewerTopComponent.settings" url="ListViewerTopComponentSettings.xml"/>
+            <file name="PicklistTopComponent.settings" url="PicklistTopComponentSettings.xml"/>
+            <file name="RecordContextViewerTopComponent.settings" url="RecordContextViewerTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="ListViewerTopComponent.wstcref" url="ListViewerTopComponentWstcref.xml"/>
+            </folder>
+            <folder name="output">
+                <file name="PicklistTopComponent.wstcref" url="PicklistTopComponentWstcref.xml"/>
+            </folder>
+            <folder name="rightSlidingSide">
+                <file name="RecordContextViewerTopComponent.wstcref" url="RecordContextViewerTopComponentWstcref.xml"/>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

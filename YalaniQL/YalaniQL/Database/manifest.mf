@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.kaiec.retro.data
+OpenIDE-Module-Layer: org/kaiec/retro/data/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/kaiec/retro/data/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+OpenIDE-Module-Specification-Version: 1.0
+

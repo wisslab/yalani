@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -82,6 +83,8 @@ public final class ListViewerTopComponent extends TopComponent {
     private InstanceContent instanceContent = new InstanceContent();
     private Lookup.Result<Record> result;
     private Record currentLookup;
+    
+    ResourceBundle i18n = java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle");
 
     public ListViewerTopComponent() {
         initComponents();
@@ -110,7 +113,7 @@ public final class ListViewerTopComponent extends TopComponent {
 
 
         filterConfigPanel = new FilterConfigPanel(this, (TableRowSorter) jTable1.getRowSorter());
-        filterConfigWindow = new JFrame("Filterkonfiguration");
+        filterConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.filterConfigButton.text"));
         filterConfigWindow.setVisible(false);
         filterConfigWindow.setSize(600, 400);
         filterConfigWindow.add(filterConfigPanel);
@@ -129,7 +132,7 @@ public final class ListViewerTopComponent extends TopComponent {
             }
         });
         colorConfigPanel = new ColorConfigPanel();
-        colorConfigWindow = new JFrame("RVK Farbkonfiguration");
+        colorConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.rvkColoButton.text"));
         colorConfigWindow.setVisible(false);
         colorConfigWindow.setSize(600, 400);
         colorConfigWindow.add(colorConfigPanel);
@@ -340,7 +343,7 @@ public final class ListViewerTopComponent extends TopComponent {
             public void memoryUsageLow(long usedMemory, long maxMemory) {
                 memWarningLabel.setVisible(true);
                 NotifyDescriptor d =
-                        new NotifyDescriptor.Message("80% des zur verfügung stehenden Speichers sind voll. Es könnte zu Stabilitätsproblemen kommen.", NotifyDescriptor.INFORMATION_MESSAGE);
+                        new NotifyDescriptor.Message(java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("low-memory-warning"), NotifyDescriptor.INFORMATION_MESSAGE);
                 DialogDisplayer.getDefault().notifyLater(d);
             }
         });
@@ -354,16 +357,16 @@ public final class ListViewerTopComponent extends TopComponent {
         for (int i = 0; i < jTable1.getModel().getColumnCount(); i++) {
             filterColumn.addItem(jTable1.getModel().getColumnName(i));
         }
-        filterColumn.addItem("Irgendwo");
+        filterColumn.addItem(i18n.getString("anywhere"));
         filterCrit.removeAllItems();
-        filterCrit.addItem("enthält");
-        filterCrit.addItem("enthält nicht");
-        filterCrit.addItem("beginnt mit");
-        filterCrit.addItem("ist");
-        filterCrit.addItem("ist nicht");
-        filterCrit.addItem("kleiner");
-        filterCrit.addItem("größer");
-        filterCrit.addItem("Wortzahl");
+        filterCrit.addItem(i18n.getString("filter-contains"));
+        filterCrit.addItem(i18n.getString("filter-contains-not"));
+        filterCrit.addItem(i18n.getString("filter-begins-with"));
+        filterCrit.addItem(i18n.getString("filter-is"));
+        filterCrit.addItem(i18n.getString("filter-is-not"));
+        filterCrit.addItem(i18n.getString("filter-smaller"));
+        filterCrit.addItem(i18n.getString("filter-bigger"));
+        filterCrit.addItem(i18n.getString("filter-wordcount"));
         filterValue.setText("");
     }
 
@@ -398,21 +401,21 @@ public final class ListViewerTopComponent extends TopComponent {
             value = "";
         }
         value = value.toLowerCase();
-        if (filterCrit.getSelectedItem().equals("enthält")) {
+         if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains"))) {
             return value.indexOf(filterValue.getText().toLowerCase()) != -1;
-        } else if (filterCrit.getSelectedItem().equals("enthält nicht")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains-not"))) {
             return value.indexOf(filterValue.getText().toLowerCase()) == -1;
-        } else if (filterCrit.getSelectedItem().equals("beginnt mit")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-begins-with"))) {
             return value.startsWith(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals("ist")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is"))) {
             return value.equals(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals("ist nicht")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is-not"))) {
             return !value.equals(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals("kleiner")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-smaller"))) {
             return value.compareTo(filterValue.getText().toLowerCase()) < 0;
-        } else if (filterCrit.getSelectedItem().equals("größer")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-bigger"))) {
             return value.compareTo(filterValue.getText().toLowerCase()) > 0;
-        } else if (filterCrit.getSelectedItem().equals("Wortzahl")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-wordcount"))) {
             try {
                 int number = Integer.parseInt(filterValue.getText());
                 if (number==0 && value.trim().length()==0) return true;
@@ -805,7 +808,7 @@ public final class ListViewerTopComponent extends TopComponent {
         PicklistPanel myPanel = new PicklistPanel(new PicklistEntry());
         NotifyDescriptor nd = new NotifyDescriptor(
                 myPanel, // instance of your panel
-                "(!) Zuweisung an alle sichtbaren Reihen", // title of the dialog
+                java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("mass-label-warning"), // title of the dialog
                 NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
                 NotifyDescriptor.QUESTION_MESSAGE, // ... of a question type => a question mark icon
                 null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,

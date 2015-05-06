@@ -92,18 +92,18 @@ public class ListTableModel extends DefaultTableModel {
     @Override
     public String getColumnName(int column) {
         switch (column) {
-            case COL_AUTHOR: return "Autoren und Herausgeber";
-            case COL_TITLE: return "Titel";
-            case COL_SERIES: return "Reihe";
-            case COL_YEAR: return "Jahr";
-            case COL_KEYWORDS: return "Schlagwörter";
-            case COL_EDITION: return "Auflage";
-            case COL_LANGUAGE: return "Sprache";
-            case COL_SIG: return "Signatur";
-            case COL_CLASSES: return "RVKs (mehrere Quellen)";
-            case COL_EDIT: return "Bearbeiterfeld";
-            case COL_UPDATED: return "Letzte Änderung";
-            default: return "Möp";
+            case COL_AUTHOR: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-author");
+            case COL_TITLE: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-title");
+            case COL_SERIES: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-series");
+            case COL_YEAR: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-year");
+            case COL_KEYWORDS: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-subjects");
+            case COL_EDITION: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-edition");
+            case COL_LANGUAGE: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-language");
+            case COL_SIG: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-callnumber");
+            case COL_CLASSES: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-classes");
+            case COL_EDIT: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-new-label");
+            case COL_UPDATED: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-last-modified");
+            default: return "???";
         }
     }
 

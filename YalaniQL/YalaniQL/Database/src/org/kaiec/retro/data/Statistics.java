@@ -22,9 +22,9 @@ public class Statistics {
 
     public static String calcFromUpdated(long breaktime) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Neues Intervall nach ");
+        sb.append(java.util.ResourceBundle.getBundle("org/kaiec/retro/data/Bundle").getString("stats-new-interval-after"));
         sb.append(breaktime);
-        sb.append(" Minute(n).\n");
+        sb.append(" " + java.util.ResourceBundle.getBundle("org/kaiec/retro/data/Bundle").getString("stats-minutes")+ ".\n");
         List<Record> records = new ArrayList<Record>();
         for (Record rec : RecordList.getInstance().getRecords()) {
             if (rec.getUpdated()!=null) records.add(rec);

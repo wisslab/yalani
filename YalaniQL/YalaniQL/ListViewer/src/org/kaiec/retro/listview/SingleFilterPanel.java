@@ -10,6 +10,7 @@
  */
 package org.kaiec.retro.listview;
 
+import java.util.ResourceBundle;
 import javax.swing.RowFilter;
 import javax.swing.RowFilter.Entry;
 
@@ -20,6 +21,7 @@ import javax.swing.RowFilter.Entry;
 public class SingleFilterPanel extends javax.swing.JPanel {
 
     FilterConfigPanel root;
+    ResourceBundle i18n = java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle");
 
     /** Creates new form SingleFilterPanel */
     public SingleFilterPanel(FilterConfigPanel root) {
@@ -29,37 +31,37 @@ public class SingleFilterPanel extends javax.swing.JPanel {
         for (int i = 0; i < root.getModel().getColumnCount(); i++) {
             filterColumn.addItem(root.getModel().getColumnName(i));
         }
-        filterColumn.addItem("Irgendwo");
+        filterColumn.addItem(i18n.getString("anywhere"));
         filterCrit.removeAllItems();
-        filterCrit.addItem("enthält");
-        filterCrit.addItem("enthält nicht");
-        filterCrit.addItem("beginnt mit");
-        filterCrit.addItem("ist");
-        filterCrit.addItem("ist nicht");
-        filterCrit.addItem("kleiner");
-        filterCrit.addItem("größer");
-        filterCrit.addItem("Wortzahl");
+        filterCrit.addItem(i18n.getString("filter-contains"));
+        filterCrit.addItem(i18n.getString("filter-contains-not"));
+        filterCrit.addItem(i18n.getString("filter-begins-with"));
+        filterCrit.addItem(i18n.getString("filter-is"));
+        filterCrit.addItem(i18n.getString("filter-is-not"));
+        filterCrit.addItem(i18n.getString("filter-smaller"));
+        filterCrit.addItem(i18n.getString("filter-bigger"));
+        filterCrit.addItem(i18n.getString("filter-wordcount"));
         filterValue.setText("");
     }
 
     private boolean includeByColumn(Entry entry, int column) {
         String value = (String) entry.getValue(column);
         value = value.toLowerCase();
-        if (filterCrit.getSelectedItem().equals("enthält")) {
+        if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains"))) {
             return value.indexOf(filterValue.getText().toLowerCase()) != -1;
-        } else if (filterCrit.getSelectedItem().equals("enthält nicht")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains-not"))) {
             return value.indexOf(filterValue.getText().toLowerCase()) == -1;
-        } else if (filterCrit.getSelectedItem().equals("beginnt mit")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-begins-with"))) {
             return value.startsWith(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals("ist")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is"))) {
             return value.equals(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals("ist nicht")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is-not"))) {
             return !value.equals(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals("kleiner")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-smaller"))) {
             return value.compareTo(filterValue.getText().toLowerCase()) < 0;
-        } else if (filterCrit.getSelectedItem().equals("größer")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-bigger"))) {
             return value.compareTo(filterValue.getText().toLowerCase()) > 0;
-        } else if (filterCrit.getSelectedItem().equals("Wortzahl")) {
+        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-wordcount"))) {
             try {
                 int number = Integer.parseInt(filterValue.getText());
                 if (number==0 && value.trim().length()==0) return true;

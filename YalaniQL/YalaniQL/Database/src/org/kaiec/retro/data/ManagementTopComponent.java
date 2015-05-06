@@ -202,7 +202,7 @@ public final class ManagementTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        if (String.copyValueOf(passwordField.getPassword()).equals("admax")) {
+        if (String.copyValueOf(passwordField.getPassword()).equals("")) {
             jPanel1.setVisible(true);
         }
         passwordField.setText("");

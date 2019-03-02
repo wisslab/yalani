@@ -1,5 +1,10 @@
 /yalani/
 **/build/
+**/nbbuild/
 **/dist/
+**/nbdist/
 *.db
 **/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+**/.nb-gradle

@@ -134,7 +134,7 @@ public class DatabaseSelector extends javax.swing.JPanel {
 
 				@Override
 				public boolean accept(File f) {
-					 return f.isDirectory() || f.getName().endsWith(".data.db");
+					 return f.isDirectory() || f.getName().endsWith(".data.db")|| f.getName().endsWith(".mv.db");
 				}
 
 				@Override
@@ -149,6 +149,8 @@ public class DatabaseSelector extends javax.swing.JPanel {
 					 file += File.separatorChar + "semtineldb";
 				} else if (chooser.getSelectedFile().getName().endsWith(".data.db")) {
 					 file = file.substring(0,file.length()-".data.db".length());
+				} else if (chooser.getSelectedFile().getName().endsWith(".mv.db")) {
+					 file = file.substring(0,file.length()-".mv.db".length());
 				}
                 try {
                     DirectoryManager.getInstance().setDirectory(getClass().getName(), chooser.getCurrentDirectory().getCanonicalPath());
@@ -187,8 +189,10 @@ public class DatabaseSelector extends javax.swing.JPanel {
 	 private void updateStatus() {
 		  String fileName = newDatabaseLocation.getText();
 		  fileName+=".data.db";
+		  String fileName2=fileName + ".mv.db";
 		  File file = new File(fileName);
-		  if (file.exists()) {
+		  File file2 = new File(fileName2);
+		  if (file.exists() || file2.exists()) {
 				statusLabel.setText("Existing Database.");
 		  }
 		  else {

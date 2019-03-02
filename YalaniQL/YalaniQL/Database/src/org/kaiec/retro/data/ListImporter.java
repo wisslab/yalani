@@ -39,6 +39,9 @@ public class ListImporter {
 
     private String csvfile;
     private String delim2 = Character.toString((char) 31);
+    private String wrongDelim2 = ";"; // to be replaced by the correct one above... dirty workaround...
+    
+    
     // @result = ($id,$lang,$author,$title,$year,$edition,$pub,$sws,$rvks,$isbn,$contributor);
     // autor, rvk, sw und contributor sind mit ";" getrennt
     public static final int PPN = 0;             // Keine ID mehr!!!
@@ -115,6 +118,7 @@ public class ListImporter {
                 delim = ';';
                 quote = '"';
             }
+            
             CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(csvfile), Charset.forName("UTF-8")), delim, quote, false);
             String[] nextLine;
             // writer.setProperty("showXmlDeclaration","true");
@@ -128,27 +132,37 @@ public class ListImporter {
             // hibernateUtil.getSession().clear();
             // hibernateUtil.getSession().createQuery("delete from Record").executeUpdate();
 
+            long counter = 0;
+            
             RecordList.getInstance().setFireChanges(false);
             while ((nextLine = reader.readNext()) != null) {
+                counter++;
                 // nextLine[] is an array of values from the line
                 System.out.println(nextLine[0] + "/" + nextLine[1] + " etc... " + nextLine.length);
                 String id = nextLine[BARCODE];
+                if (id==null||id.trim().isEmpty()) id = "" + counter;
                 String ppn = nextLine[PPN];
-                String author = nextLine[AUTHOR].trim();
+                String author = nextLine[AUTHOR].trim().replaceAll(wrongDelim2, delim2);
                 String title = nextLine[TITLE].trim();
                 String year = nextLine[YEAR].trim();
                 String publisher = nextLine[PUBLISHER].trim();
                 String edition = nextLine[EDITION].trim();
-                String language = nextLine[LANGUAGE];
-                String subjects = nextLine[SUBJECT].trim();
-                String classes = nextLine[CLASSIFICATION].trim();
+                if (edition.length()>30) {
+                    edition = edition.substring(0,30) + "...";
+                }
+                String language = nextLine[BNB];
+                String subjects = nextLine[SUBJECT].trim().replaceAll(wrongDelim2, delim2);
+                String classes = nextLine[CLASSIFICATION].trim().replaceAll(wrongDelim2, delim2);
                 String isbn = nextLine[ISBN].trim();
-                String contributors = nextLine[CONTRIBUTOR].trim();
+                String contributors = nextLine[CONTRIBUTOR].trim().replaceAll(wrongDelim2, delim2);
                 String signature = nextLine[SIGNATURE].trim();
                 String series = nextLine[SERIES].trim();
-                String assigned = nextLine[ASSIGNED].trim();
+                String assigned = "";
+                if (nextLine.length > ASSIGNED) {
+                    assigned = nextLine[ASSIGNED].trim();
+                }
                 String updated = null;
-                if (nextLine.length >= 19) {
+                if (nextLine.length > UPDATED) {
                     updated = nextLine[UPDATED].trim();
                 }
 

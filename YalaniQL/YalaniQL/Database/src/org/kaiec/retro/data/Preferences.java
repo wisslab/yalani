@@ -131,7 +131,7 @@ public class Preferences implements DatabaseSettings {
     }
 
     public String getConnectionUrl() {
-        return "jdbc:h2:" + getDatabaseLocation();// + ";TRACE_LEVEL_FILE=3";
+        return "jdbc:h2:" + getDatabaseLocation() + ";MAX_COMPACT_TIME=100000";// + ";TRACE_LEVEL_FILE=3";
     }
 
     private List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();

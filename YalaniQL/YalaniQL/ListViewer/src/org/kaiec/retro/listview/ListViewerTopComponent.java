@@ -111,7 +111,9 @@ public final class ListViewerTopComponent extends TopComponent {
             }
         });
 
-
+        String delim2 = Character.toString((char) 31);
+        // String delim2 = ";";
+        
         filterConfigPanel = new FilterConfigPanel(this, (TableRowSorter) jTable1.getRowSorter());
         filterConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.filterConfigButton.text"));
         filterConfigWindow.setVisible(false);
@@ -155,8 +157,8 @@ public final class ListViewerTopComponent extends TopComponent {
 
         TableCellEditor editor = new ComboCellEditor(renderer);
 
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellRenderer(new MultilineTableCellRenderer(Character.toString((char) 31), filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellEditor(new MultilineTableCellRenderer(Character.toString((char) 31), filterValue));
+        jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellRenderer(new MultilineTableCellRenderer(delim2, filterValue));
+        jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellEditor(new MultilineTableCellRenderer(delim2, filterValue));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_TITLE).setCellRenderer(new MultilineTableCellRenderer(filterValue));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_TITLE).setCellEditor(new MultilineTableCellRenderer(filterValue));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_SERIES).setCellRenderer(new MultilineTableCellRenderer(filterValue));
@@ -167,12 +169,12 @@ public final class ListViewerTopComponent extends TopComponent {
         jTable1.getColumnModel().getColumn(ListTableModel.COL_LANGUAGE).setCellEditor(new MultilineTableCellRenderer(filterValue));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_YEAR).setCellRenderer(new MultilineTableCellRenderer(filterValue));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_YEAR).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellRenderer(new MultilineTableCellRenderer(Character.toString((char) 31), filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellEditor(new MultilineTableCellRenderer(Character.toString((char) 31), filterValue));
+        jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellRenderer(new MultilineTableCellRenderer(delim2, filterValue));
+        jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellEditor(new MultilineTableCellRenderer(delim2, filterValue));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_SIG).setCellRenderer(new MultilineTableCellRenderer(filterValue));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_SIG).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellRenderer(new RVKEditor(jTable1, Character.toString((char) 31), colorConfigPanel));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellEditor(new RVKEditor(jTable1, Character.toString((char) 31), colorConfigPanel));
+        jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellRenderer(new RVKEditor(jTable1, delim2, colorConfigPanel));
+        jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellEditor(new RVKEditor(jTable1, delim2, colorConfigPanel));
         jTable1.getColumnModel().getColumn(ListTableModel.COL_EDIT).setCellRenderer(renderer);
         jTable1.getColumnModel().getColumn(ListTableModel.COL_EDIT).setCellEditor(editor);
         jTable1.getColumnModel().getColumn(ListTableModel.COL_UPDATED).setCellRenderer(new MultilineTableCellRenderer(filterValue));

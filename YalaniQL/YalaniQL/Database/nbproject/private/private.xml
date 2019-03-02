@@ -4,14 +4,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/hibernate.cfg.xml</file>
-            <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/org/kaiec/retro/data/RecreateDatabase.java</file>
             <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/org/kaiec/retro/data/HibernateUtil.java</file>
-            <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/org/kaiec/retro/data/stopwords_de.txt</file>
-            <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/org/kaiec/retro/data/Preferences.java</file>
-            <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/org/kaiec/retro/data/DatabasePanel.java</file>
             <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/org/kaiec/retro/data/RecordList.java</file>
-            <file>file:/C:/Users/kai/Desktop/Yalani-Development/YalaniQL/YalaniQL/Database/src/org/kaiec/retro/data/DatabaseSelector.java</file>
         </group>
     </open-files>
 </project-private>

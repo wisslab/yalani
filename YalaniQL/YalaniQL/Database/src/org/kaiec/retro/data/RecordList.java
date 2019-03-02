@@ -21,12 +21,12 @@ package org.kaiec.retro.data;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.hibernate.Query;
@@ -43,7 +43,8 @@ public class RecordList {
 
     private boolean fireChanges = true;
 
-
+    private Logger log = Logger.getLogger(getClass().getName());
+        
     private RecordList() {
         EventLog.createEvent(EventLog.APPSTART);
     }
@@ -89,6 +90,7 @@ public class RecordList {
             }
             return list;
         } catch (Throwable t) {
+            log.severe("No records found in database. Error: " + t);
             return new ArrayList<Record>();
         }
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.swing.AbstractListModel;
 import org.kaiec.retro.data.EventLog;
 import org.kaiec.retro.data.PrefSerializer;
 import org.kaiec.retro.data.Record;
@@ -48,6 +49,7 @@ public final class PicklistTopComponent extends TopComponent {
         this.result = Utilities.actionsGlobalContext().lookup(template);
         this.result.addLookupListener(new LookupListener() {
 
+            @Override
             public void resultChanged(LookupEvent arg0) {
                 Record rec = getRecordFromLookup();
                 if (rec != null) {
@@ -57,13 +59,14 @@ public final class PicklistTopComponent extends TopComponent {
             }
         });
 
-        final PrefSerializer ps = new PrefSerializer(getClass());
+        final PrefSerializer<PicklistEntry> ps = new PrefSerializer();
         picklist = ps.loadList("Picklist");
 
         jList1.setModel(new SimpleListModel(picklist));
 
         CloseEvent.getInstance().addCloseListener(new CloseListener() {
 
+            @Override
             public void closing() {
                 ps.saveList("Picklist", picklist);
             }

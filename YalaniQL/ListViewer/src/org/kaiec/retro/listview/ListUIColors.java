@@ -20,6 +20,7 @@ package org.kaiec.retro.listview;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import javax.swing.LookAndFeel;
 import javax.swing.UIDefaults;
@@ -35,8 +36,16 @@ public final class ListUIColors implements ActionListener {
         for (LookAndFeelInfo lookAndFeelInfo : lookAndFeelInfos) {
             try {
                 System.out.println("LookAndFeel: " + lookAndFeelInfo.getName());
-                LookAndFeel lookAndFeel = (LookAndFeel) Class.forName(
-                    lookAndFeelInfo.getClassName()).newInstance();
+                LookAndFeel lookAndFeel;
+                try {
+
+                    lookAndFeel = (LookAndFeel) Class.forName(
+                            lookAndFeelInfo.getClassName()).getDeclaredConstructor().newInstance();
+
+                } catch (NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
+                    Exceptions.printStackTrace(ex);
+                    throw new RuntimeException(ex);
+                }
                 UIDefaults defaults = lookAndFeel.getDefaults();
                 for (Map.Entry<Object, Object> entry : defaults.entrySet()) {
                     System.out.println(entry.getKey() + ": " + entry.getValue());

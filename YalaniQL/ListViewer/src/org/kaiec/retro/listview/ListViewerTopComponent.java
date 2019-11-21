@@ -114,7 +114,7 @@ public final class ListViewerTopComponent extends TopComponent {
         String delim2 = Character.toString((char) 31);
         // String delim2 = ";";
         
-        filterConfigPanel = new FilterConfigPanel(this, (TableRowSorter) jTable1.getRowSorter());
+        filterConfigPanel = new FilterConfigPanel(this, (TableRowSorter<TableModel>) jTable1.getRowSorter());
         filterConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.filterConfigButton.text"));
         filterConfigWindow.setVisible(false);
         filterConfigWindow.setSize(600, 400);
@@ -520,8 +520,8 @@ public final class ListViewerTopComponent extends TopComponent {
         contextButton = new javax.swing.JToggleButton();
         jButton2 = new javax.swing.JButton();
         massAssignment = new javax.swing.JButton();
-        filterColumn = new javax.swing.JComboBox();
-        filterCrit = new javax.swing.JComboBox();
+        filterColumn = new javax.swing.JComboBox<String>();
+        filterCrit = new javax.swing.JComboBox<String>();
         filterValue = new javax.swing.JTextField();
         quickFilterButton = new javax.swing.JToggleButton();
         jButton3 = new javax.swing.JButton();
@@ -651,7 +651,7 @@ public final class ListViewerTopComponent extends TopComponent {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
+                            .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -705,9 +705,7 @@ public final class ListViewerTopComponent extends TopComponent {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(17, 17, 17))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)

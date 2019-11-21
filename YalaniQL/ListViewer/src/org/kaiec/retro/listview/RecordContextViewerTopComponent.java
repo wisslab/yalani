@@ -64,7 +64,7 @@ public final class RecordContextViewerTopComponent extends TopComponent {
 
             }
         });
-        final PrefSerializer ps = new PrefSerializer(getClass());
+        final PrefSerializer<ExternalLink> ps = new PrefSerializer();
         links = ps.loadList("Links");
         System.out.println("Links loaded: " + links.size());
         if (links.isEmpty()) createDefaultLinks();
@@ -454,17 +454,6 @@ public final class RecordContextViewerTopComponent extends TopComponent {
 
     
    
-
-
-
-
-
-
-
-
-
-}
-
 class SimpleListModel extends AbstractListModel {
 
     private List list;
@@ -485,3 +474,14 @@ class SimpleListModel extends AbstractListModel {
         fireContentsChanged(this, 0, list.size() - 1);
     }
 }
+
+
+
+
+
+
+
+
+
+}
+

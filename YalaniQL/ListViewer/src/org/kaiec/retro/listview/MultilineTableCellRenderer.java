@@ -55,7 +55,7 @@ public class MultilineTableCellRenderer extends AbstractCellEditor implements Ta
             @Override
             public void mouseClicked(MouseEvent e) {
                 String text = textarea.getText().replaceAll("\n", " ");
-                int caret = textarea.viewToModel(e.getPoint());
+                int caret = textarea.viewToModel2D(e.getPoint());
 //                System.out.println("Caret;: " + caret);
 		int next = text.substring(caret).indexOf(" ");
   //              System.out.println("Rest: " + textarea.getText().substring(caret));

@@ -25,7 +25,7 @@ import org.kaiec.retro.data.RecordList;
  * @author kai
  */
 public class ColorConfigPanel extends javax.swing.JPanel {
-    List<ColorPattern> colors = new ArrayList<ColorPattern>();
+    List<ColorPattern> colors = new ArrayList<>();
     /** Creates new form ColorConfigPanel */
     public ColorConfigPanel() {
         initComponents();
@@ -40,12 +40,14 @@ public class ColorConfigPanel extends javax.swing.JPanel {
     }
 
     public void save() {
-        new PrefSerializer(getClass()).saveList("Colors", colors);
+        PrefSerializer<ColorPattern> ps = new PrefSerializer<>();
+        ps.saveList("Colors", colors);
     }
 
     public void load() {
+        PrefSerializer<ColorPattern> ps = new PrefSerializer<>();
         colors.clear();
-        colors.addAll(new PrefSerializer(getClass()).loadList("Colors"));
+        colors.addAll( ps.loadList("Colors"));
         createColorPanel();
     }
 

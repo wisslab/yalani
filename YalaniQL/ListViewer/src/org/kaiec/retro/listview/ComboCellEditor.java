@@ -39,7 +39,7 @@ import javax.swing.table.TableCellEditor;
 public class ComboCellEditor extends AbstractCellEditor implements TableCellEditor {
 
     JPanel panel = new JPanel();
-    JComboBox comboBox = new JComboBox();
+    JComboBox<String> comboBox = new JComboBox<>();
     private List<String> history = new ArrayList<String>();
 
 
@@ -75,7 +75,7 @@ public class ComboCellEditor extends AbstractCellEditor implements TableCellEdit
         String classes = (String) table.getModel().getValueAt(modelRow, ListTableModel.COL_CLASSES);
         // Configure the component with the specified value
         comboBox.removeAllItems();
-        comboBox.addItem(value);
+        comboBox.addItem((String) value);
         StringTokenizer st = new StringTokenizer(classes, Character.toString((char) 31));
         while (st.hasMoreTokens()) {
             String next = st.nextToken();

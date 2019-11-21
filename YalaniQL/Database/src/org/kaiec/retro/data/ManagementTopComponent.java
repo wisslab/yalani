@@ -7,7 +7,6 @@ package org.kaiec.retro.data;
 import java.awt.Component;
 import java.util.logging.Logger;
 import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -248,7 +247,7 @@ public final class ManagementTopComponent extends TopComponent {
 
 
 
-                final ProgressHandle progressHandle = ProgressHandleFactory.createHandle("Import");
+                final ProgressHandle progressHandle = ProgressHandle.createHandle("Import");
 
         new Thread(new Runnable() {
 

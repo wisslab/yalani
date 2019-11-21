@@ -241,6 +241,9 @@
           </StringArray>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;String&gt;()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="filterCrit">
       <Properties>
@@ -253,6 +256,9 @@
           </StringArray>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;String&gt;()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="filterValue">
       <Properties>

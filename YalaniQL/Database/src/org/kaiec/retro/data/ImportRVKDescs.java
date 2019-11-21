@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Query;
 import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.Exceptions;
 
 public final class ImportRVKDescs implements ActionListener {
@@ -90,7 +89,7 @@ public final class ImportRVKDescs implements ActionListener {
 
 
 
-                final ProgressHandle progressHandle = ProgressHandleFactory.createHandle("RVK Descs");
+                final ProgressHandle progressHandle = ProgressHandle.createHandle("RVK Descs");
 
         new Thread(new Runnable() {
 

@@ -8,7 +8,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
 
 public final class ImportExcel implements ActionListener {
 
@@ -22,7 +21,7 @@ public final class ImportExcel implements ActionListener {
 
 
 
-                final ProgressHandle progressHandle = ProgressHandleFactory.createHandle("Import");
+                final ProgressHandle progressHandle = ProgressHandle.createHandle("Import");
 
         new Thread(new Runnable() {
 

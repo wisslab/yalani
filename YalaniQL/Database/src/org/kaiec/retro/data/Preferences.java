@@ -110,7 +110,7 @@ public class Preferences implements DatabaseSettings {
         try {
                 prefs.load(new FileInputStream(new File(basedir + File.separator + "_prefs")));
         } catch (FileNotFoundException ex) {
-                return;
+                log.info("_prefs not found, using defaults.");
                 // throw new RuntimeException("Error loading preferences: " + ex, ex);
         } catch (IOException ex) {
                 throw new RuntimeException("Error loading preferences: " + ex, ex);

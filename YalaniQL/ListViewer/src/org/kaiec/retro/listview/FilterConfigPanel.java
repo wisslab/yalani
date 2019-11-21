@@ -27,11 +27,11 @@ import org.kaiec.retro.data.EventLog;
  */
 public class FilterConfigPanel extends javax.swing.JPanel {
 
-    TableRowSorter sorter;
+    TableRowSorter<TableModel> sorter;
     ListViewerTopComponent parent;
     List<SingleFilterPanel> filters = new ArrayList<SingleFilterPanel>();
     /** Creates new form FilterConfigPanel */
-    public FilterConfigPanel(ListViewerTopComponent parent, TableRowSorter sorter) {
+    public FilterConfigPanel(ListViewerTopComponent parent, TableRowSorter<TableModel> sorter) {
         initComponents();
         this.sorter = sorter;
         this.parent = parent;
@@ -40,7 +40,7 @@ public class FilterConfigPanel extends javax.swing.JPanel {
     }
 
     public TableModel getModel() {
-        return (TableModel) sorter.getModel();
+        return sorter.getModel();
     }
 
 

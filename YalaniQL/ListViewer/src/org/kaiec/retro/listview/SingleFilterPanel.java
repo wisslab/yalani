@@ -28,10 +28,14 @@ public class SingleFilterPanel extends javax.swing.JPanel {
         initComponents();
         this.root = root;
         filterColumn.removeAllItems();
-        for (int i = 0; i < root.getModel().getColumnCount(); i++) {
+        // Skip last column that contains the timestamp, this is
+        // not usable for filters. See issue #2
+        for (int i = 0; i < root.getModel().getColumnCount() - 1; i++) {
+            
             filterColumn.addItem(root.getModel().getColumnName(i));
         }
-        filterColumn.addItem(i18n.getString("anywhere"));
+        // Anywhere is not (yet) supported here! See issue #2
+        // filterColumn.addItem(i18n.getString("anywhere"));
         filterCrit.removeAllItems();
         filterCrit.addItem(i18n.getString("filter-contains"));
         filterCrit.addItem(i18n.getString("filter-contains-not"));

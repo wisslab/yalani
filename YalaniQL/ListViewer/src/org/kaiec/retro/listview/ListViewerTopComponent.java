@@ -356,7 +356,9 @@ public final class ListViewerTopComponent extends TopComponent {
 
     private void initQuickFilter() {
         filterColumn.removeAllItems();
-        for (int i = 0; i < jTable1.getModel().getColumnCount(); i++) {
+        // Skip last column that contains the timestamp, this is
+        // not usable for filters. See issue #2
+        for (int i = 0; i < jTable1.getModel().getColumnCount() - 1; i++) {
             filterColumn.addItem(jTable1.getModel().getColumnName(i));
         }
         filterColumn.addItem(i18n.getString("anywhere"));

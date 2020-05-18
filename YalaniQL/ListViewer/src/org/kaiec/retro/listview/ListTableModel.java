@@ -21,6 +21,7 @@ package org.kaiec.retro.listview;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.event.ChangeEvent;
@@ -66,10 +67,14 @@ public class ListTableModel extends DefaultTableModel {
                 fireTableDataChanged();
             }
         });
+	
+	
         fireTableStructureChanged();
         fireTableDataChanged();
 
     }
+    
+    
 
     public List<Record> getRecords() {
         return records;
@@ -79,6 +84,7 @@ public class ListTableModel extends DefaultTableModel {
 
     public void setRecords(List<Record> records) {
         this.records = records;
+	this.nameCache.clear();
         fireTableDataChanged();
     }
 
@@ -91,6 +97,21 @@ public class ListTableModel extends DefaultTableModel {
     @Override
     public int getColumnCount() {
         return 16;
+    }
+    
+    private HashMap<String, Integer> nameCache = new HashMap<>();
+    
+    public int getColumnIndexByName(String name) {
+	    if (nameCache.containsKey(name)) {
+		    return nameCache.get(name);
+	    }
+	    for (int i=0;i<this.getColumnCount();i++) {
+		    if (getColumnName(i).equals(name)) {
+			    nameCache.put(name, i);
+			    return i;
+		    }
+	    }
+	    return -1;
     }
 
     @Override

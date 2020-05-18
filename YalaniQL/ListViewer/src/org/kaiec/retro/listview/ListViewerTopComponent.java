@@ -385,8 +385,8 @@ public final class ListViewerTopComponent extends TopComponent {
 		filterColumn.removeAllItems();
 		// Skip last column that contains the timestamp, this is
 		// not usable for filters. See issue #2
-		for (int i = 0; i < jTable1.getModel().getColumnCount() - 1; i++) {
-			String name = jTable1.getModel().getColumnName(i);
+		for (int i = 0; i < jTable1.getColumnCount() - 1; i++) {
+			String name = jTable1.getColumnName(i);
 			if (name.equals(Preferences.HIDE_CUSTOM_FIELD)) continue;
 			filterColumn.addItem(name);
 		}
@@ -411,7 +411,7 @@ public final class ListViewerTopComponent extends TopComponent {
 				// Irgendwo Filter
 				if (filterColumn.getSelectedIndex() == filterColumn.getItemCount() - 1) {
 					for (int i = 0; i < filterColumn.getItemCount() - 1; i++) {
-						if (includeByColumn(entry, i)) {
+						if (includeByName(entry, filterColumn.getItemAt(i).toString())) {
 							return true;
 						}
 					}
@@ -419,10 +419,16 @@ public final class ListViewerTopComponent extends TopComponent {
 				}
 
 				// Normale Filter
-				return includeByColumn(entry, filterColumn.getSelectedIndex());
+				return includeByName(entry, filterColumn.getSelectedItem().toString());
 			}
 		};
 		return filter;
+	}
+	
+	
+	private boolean includeByName(Entry entry, String name) {
+		int column = ((ListTableModel) jTable1.getModel()).getColumnIndexByName(name);
+		return includeByColumn(entry, column);
 	}
 
 	private boolean includeByColumn(Entry entry, int column) {
@@ -435,9 +441,9 @@ public final class ListViewerTopComponent extends TopComponent {
 		}
 		value = value.toLowerCase();
 		if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains"))) {
-			return value.indexOf(filterValue.getText().toLowerCase()) != -1;
+			return value.contains(filterValue.getText().toLowerCase());
 		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains-not"))) {
-			return value.indexOf(filterValue.getText().toLowerCase()) == -1;
+			return !value.contains(filterValue.getText().toLowerCase());
 		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-begins-with"))) {
 			return value.startsWith(filterValue.getText().toLowerCase());
 		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is"))) {

@@ -49,6 +49,11 @@ public class SingleFilterPanel extends javax.swing.JPanel {
         filterCrit.addItem(i18n.getString("filter-wordcount"));
         filterValue.setText("");
     }
+    
+    private boolean includeByName(Entry entry, String name) {
+		int column = ((ListTableModel) root.getModel()).getColumnIndexByName(name);
+		return includeByColumn(entry, column);
+	}
 
     private boolean includeByColumn(Entry entry, int column) {
         String value = (String) entry.getValue(column);
@@ -107,17 +112,19 @@ public class SingleFilterPanel extends javax.swing.JPanel {
             public boolean include(Entry entry) {
 
                 // Irgendwo Filter
+		/* Deaktiviert, siehe oben
                 if (filterColumn.getSelectedIndex() == filterColumn.getItemCount() - 1) {
                     for (int i = 0; i < filterColumn.getItemCount() - 1; i++) {
-                        if (includeByColumn(entry, i)) {
+                        if (includeByName(entry, filterColumn.getItemAt(i).toString())) {
                             return true;
                         }
                     }
                     return false;
                 }
+		*/
 
                 // Normale Filter
-                return includeByColumn(entry, filterColumn.getSelectedIndex());
+                return includeByName(entry, filterColumn.getSelectedItem().toString());
             }
         };
         return filter;

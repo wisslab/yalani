@@ -61,8 +61,13 @@ public class ListImporter {
     public static final int SERIES = 14;  // Reihentitel
     public static final int SIGNATURE = 15;
     public static final int BARCODE = 16;  // WIrd als interne ID benutzt
-    public static final int ASSIGNED = 17;
-    public static final int UPDATED = 18;
+    public static final int CUSTOM1 = 17;
+    public static final int CUSTOM2 = 18;
+    public static final int CUSTOM3 = 19;
+    public static final int CUSTOM4 = 20;
+    public static final int CUSTOM5 = 21;
+    public static final int ASSIGNED = 22;
+    public static final int UPDATED = 23;
     private ISBNTool isbntool = new ISBNTool();
     private Pattern isbnPattern = Pattern.compile("[0-9X-]{10,}");
     private boolean context = false;
@@ -150,13 +155,18 @@ public class ListImporter {
                 if (edition.length()>30) {
                     edition = edition.substring(0,30) + "...";
                 }
-                String language = nextLine[BNB];
+                String language = nextLine[LANGUAGE];
                 String subjects = nextLine[SUBJECT].trim().replaceAll(wrongDelim2, delim2);
                 String classes = nextLine[CLASSIFICATION].trim().replaceAll(wrongDelim2, delim2);
                 String isbn = nextLine[ISBN].trim();
                 String contributors = nextLine[CONTRIBUTOR].trim().replaceAll(wrongDelim2, delim2);
                 String signature = nextLine[SIGNATURE].trim();
                 String series = nextLine[SERIES].trim();
+                String custom1 = nextLine[CUSTOM1].trim();
+                String custom2 = nextLine[CUSTOM2].trim();
+                String custom3 = nextLine[CUSTOM3].trim();
+                String custom4 = nextLine[CUSTOM4].trim();
+                String custom5 = nextLine[CUSTOM5].trim();
                 String assigned = "";
                 if (nextLine.length > ASSIGNED) {
                     assigned = nextLine[ASSIGNED].trim();
@@ -208,6 +218,11 @@ public class ListImporter {
                     record.setEdition(edition);
                     record.setLanguage(language);
                     record.setSeries(series);
+                    record.setCustom1(custom1);
+                    record.setCustom2(custom2);
+                    record.setCustom3(custom3);
+                    record.setCustom4(custom4);
+                    record.setCustom5(custom5);
                 }
                 record.setAssignment(assigned, true);
                 if (updated != null && !updated.isEmpty()) {

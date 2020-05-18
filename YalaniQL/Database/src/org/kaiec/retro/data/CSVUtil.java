@@ -23,7 +23,7 @@ public class CSVUtil {
 
 
     public static void writeRecord(Record rec, CSVWriter writer) {
-        String[] strings = new String[19];
+        String[] strings = new String[24];
         strings[ListImporter.ASSIGNED] = rec.getAssignment();
         strings[ListImporter.PPN] = rec.getPpn();
         strings[ListImporter.BARCODE] = rec.getExternalId();
@@ -40,6 +40,11 @@ public class CSVUtil {
         strings[ListImporter.SIGNATURE] = rec.getSignature();
         strings[ListImporter.AUTHOR] = rec.getCreators();
         strings[ListImporter.SERIES] = rec.getSeries();
+        strings[ListImporter.CUSTOM1] = rec.getCustom1();
+        strings[ListImporter.CUSTOM2] = rec.getCustom2();
+        strings[ListImporter.CUSTOM3] = rec.getCustom3();
+        strings[ListImporter.CUSTOM4] = rec.getCustom4();
+        strings[ListImporter.CUSTOM5] = rec.getCustom5();
         strings[ListImporter.BNB] = "";
         strings[ListImporter.LOCS] = "";
         if (rec.getUpdated() != null) {

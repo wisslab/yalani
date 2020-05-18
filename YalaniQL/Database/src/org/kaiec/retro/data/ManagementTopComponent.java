@@ -24,6 +24,7 @@ public final class ManagementTopComponent extends TopComponent {
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "ManagementTopComponent";
+    private Preferences prefs = HibernateUtil.getInstance().getPreferences();
 
     public ManagementTopComponent() {
         initComponents();
@@ -31,6 +32,11 @@ public final class ManagementTopComponent extends TopComponent {
         // setToolTipText(NbBundle.getMessage(ManagementTopComponent.class, "HINT_ManagementTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
 
+        custom1Field.setText(prefs.getCustom1());
+        custom2Field.setText(prefs.getCustom2());
+        custom3Field.setText(prefs.getCustom3());
+        custom4Field.setText(prefs.getCustom4());
+        custom5Field.setText(prefs.getCustom5());
         jPanel1.setVisible(false);
     }
 
@@ -51,6 +57,17 @@ public final class ManagementTopComponent extends TopComponent {
         exportButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         importExcelButton1 = new javax.swing.JButton();
+        custom1Field = new javax.swing.JTextField();
+        custom1Label = new javax.swing.JLabel();
+        custom2Field = new javax.swing.JTextField();
+        custom2Label = new javax.swing.JLabel();
+        custom3Field = new javax.swing.JTextField();
+        custom3Label = new javax.swing.JLabel();
+        custom5Field = new javax.swing.JTextField();
+        custom5Label = new javax.swing.JLabel();
+        custom4Field = new javax.swing.JTextField();
+        custom4Label = new javax.swing.JLabel();
+        customButton = new javax.swing.JButton();
         loginButton = new javax.swing.JButton();
         passwordField = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
@@ -111,6 +128,58 @@ public final class ManagementTopComponent extends TopComponent {
             }
         });
 
+        custom1Field.setText(org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom1Field.text")); // NOI18N
+        custom1Field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                custom1FieldActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(custom1Label, org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom1Label.text")); // NOI18N
+
+        custom2Field.setText(org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom2Field.text")); // NOI18N
+        custom2Field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                custom2FieldActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(custom2Label, org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom2Label.text")); // NOI18N
+
+        custom3Field.setText(org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom3Field.text")); // NOI18N
+        custom3Field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                custom3FieldActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(custom3Label, org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom3Label.text")); // NOI18N
+
+        custom5Field.setText(org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom5Field.text")); // NOI18N
+        custom5Field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                custom5FieldActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(custom5Label, org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom5Label.text")); // NOI18N
+
+        custom4Field.setText(org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom4Field.text")); // NOI18N
+        custom4Field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                custom4FieldActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(custom4Label, org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.custom4Label.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(customButton, org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.customButton.text")); // NOI18N
+        customButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -118,19 +187,40 @@ public final class ManagementTopComponent extends TopComponent {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(importExcelButton1)
                     .addComponent(importExcelButton)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(importRVKButton)
                             .addComponent(importListButton)
-                            .addComponent(importContextButton))
+                            .addComponent(importContextButton)
+                            .addComponent(importExcelButton1))
                         .addGap(135, 135, 135)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton1)
                             .addComponent(exportButton)
-                            .addComponent(selectDatabaseButton))))
-                .addContainerGap(294, Short.MAX_VALUE))
+                            .addComponent(selectDatabaseButton)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(custom1Field, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(custom1Label))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(custom2Field, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(custom2Label))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(custom3Field, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(custom3Label))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(custom4Field, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(custom4Label))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(custom5Field, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(custom5Label))
+                            .addComponent(customButton))))
+                .addContainerGap(240, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,8 +240,29 @@ public final class ManagementTopComponent extends TopComponent {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(importExcelButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(importExcelButton1)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(importExcelButton1)
+                    .addComponent(custom1Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(custom1Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(custom2Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(custom2Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(custom3Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(custom3Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(custom4Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(custom4Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(custom5Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(custom5Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(customButton)
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(loginButton, org.openide.util.NbBundle.getMessage(ManagementTopComponent.class, "ManagementTopComponent.loginButton.text")); // NOI18N
@@ -177,14 +288,14 @@ public final class ManagementTopComponent extends TopComponent {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loginButton)))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,8 +305,8 @@ public final class ManagementTopComponent extends TopComponent {
                     .addComponent(jLabel1)
                     .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loginButton))
-                .addGap(65, 65, 65)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -264,7 +375,47 @@ public final class ManagementTopComponent extends TopComponent {
 
     }//GEN-LAST:event_importExcelButton1ActionPerformed
 
+    private void custom1FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom1FieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_custom1FieldActionPerformed
+
+    private void custom2FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom2FieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_custom2FieldActionPerformed
+
+    private void custom3FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom3FieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_custom3FieldActionPerformed
+
+    private void custom5FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom5FieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_custom5FieldActionPerformed
+
+    private void custom4FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom4FieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_custom4FieldActionPerformed
+
+    private void customButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButtonActionPerformed
+        prefs.setCustom1(custom1Field.getText());
+        prefs.setCustom2(custom2Field.getText());
+        prefs.setCustom3(custom3Field.getText());
+        prefs.setCustom4(custom4Field.getText());
+        prefs.setCustom5(custom5Field.getText());
+        prefs.save();
+    }//GEN-LAST:event_customButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField custom1Field;
+    private javax.swing.JLabel custom1Label;
+    private javax.swing.JTextField custom2Field;
+    private javax.swing.JLabel custom2Label;
+    private javax.swing.JTextField custom3Field;
+    private javax.swing.JLabel custom3Label;
+    private javax.swing.JTextField custom4Field;
+    private javax.swing.JLabel custom4Label;
+    private javax.swing.JTextField custom5Field;
+    private javax.swing.JLabel custom5Label;
+    private javax.swing.JButton customButton;
     private javax.swing.JButton exportButton;
     private javax.swing.JButton importContextButton;
     private javax.swing.JButton importExcelButton;

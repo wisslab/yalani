@@ -13,6 +13,7 @@ package org.kaiec.retro.listview;
 import java.util.ResourceBundle;
 import javax.swing.RowFilter;
 import javax.swing.RowFilter.Entry;
+import org.kaiec.retro.data.Preferences;
 
 /**
  *
@@ -31,8 +32,9 @@ public class SingleFilterPanel extends javax.swing.JPanel {
         // Skip last column that contains the timestamp, this is
         // not usable for filters. See issue #2
         for (int i = 0; i < root.getModel().getColumnCount() - 1; i++) {
-            
-            filterColumn.addItem(root.getModel().getColumnName(i));
+            String name = root.getModel().getColumnName(i);
+	    if (name.equals(Preferences.HIDE_CUSTOM_FIELD)) continue;
+            filterColumn.addItem(name);
         }
         // Anywhere is not (yet) supported here! See issue #2
         // filterColumn.addItem(i18n.getString("anywhere"));

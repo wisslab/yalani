@@ -20,13 +20,13 @@
 package org.kaiec.retro.listview;
 
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
+import org.kaiec.retro.data.HibernateUtil;
 import org.kaiec.retro.data.ImportRVKDescs;
 import org.kaiec.retro.data.Record;
 import org.kaiec.retro.data.RecordList;
@@ -46,10 +46,14 @@ public class ListTableModel extends DefaultTableModel {
     public final static int COL_LANGUAGE = 5;
     public final static int COL_KEYWORDS = 6;
     public final static int COL_SIG = 7;
-    public final static int COL_CLASSES = 8;
-    public final static int COL_EDIT = 9;
-    public final static int COL_UPDATED = 10;
-
+    public final static int COL_CUSTOM1 = 8;
+    public final static int COL_CUSTOM2 = 9;
+    public final static int COL_CUSTOM3 = 10;
+    public final static int COL_CUSTOM4 = 11;
+    public final static int COL_CUSTOM5 = 12;
+    public final static int COL_CLASSES = 13;
+    public final static int COL_EDIT = 14;
+    public final static int COL_UPDATED = 15;
    
     private List<Record> records = new ArrayList<Record>();
 
@@ -86,7 +90,7 @@ public class ListTableModel extends DefaultTableModel {
 
     @Override
     public int getColumnCount() {
-        return 11;
+        return 16;
     }
 
     @Override
@@ -100,6 +104,11 @@ public class ListTableModel extends DefaultTableModel {
             case COL_EDITION: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-edition");
             case COL_LANGUAGE: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-language");
             case COL_SIG: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-callnumber");
+            case COL_CUSTOM1: return HibernateUtil.getInstance().getPreferences().getCustom1();
+            case COL_CUSTOM2: return HibernateUtil.getInstance().getPreferences().getCustom2();
+            case COL_CUSTOM3: return HibernateUtil.getInstance().getPreferences().getCustom3();
+            case COL_CUSTOM4: return HibernateUtil.getInstance().getPreferences().getCustom4();
+            case COL_CUSTOM5: return HibernateUtil.getInstance().getPreferences().getCustom5();
             case COL_CLASSES: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-classes");
             case COL_EDIT: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-new-label");
             case COL_UPDATED: return java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("list-last-modified");
@@ -125,6 +134,11 @@ public class ListTableModel extends DefaultTableModel {
             case COL_EDITION: return rec.getEdition();
             case COL_LANGUAGE: return rec.getLanguage();
             case COL_SIG: return rec.getSignature();
+            case COL_CUSTOM1: return rec.getCustom1();
+            case COL_CUSTOM2: return rec.getCustom2();
+            case COL_CUSTOM3: return rec.getCustom3();
+            case COL_CUSTOM4: return rec.getCustom4();
+            case COL_CUSTOM5: return rec.getCustom5();
             case COL_CLASSES: return rec.getClasses();
             // Deaktiviert...
             case -1: {
@@ -155,8 +169,9 @@ public class ListTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int column) {
         // return (column==COL_EDIT || column==COL_CLASSES || column==COL_TITLE) && (!records.get(row).isContext());
-        if (records.get(row).isContext() && (column==COL_EDIT || column==COL_CLASSES)) return false;
-        return true;
+        if (records.get(row).isContext()) return false;
+	if (column==COL_EDIT || column==COL_CLASSES) return true;
+        return false;
     }
 
     @Override

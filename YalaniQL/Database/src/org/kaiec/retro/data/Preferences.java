@@ -16,7 +16,6 @@
  * along with Semtinel.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package org.kaiec.retro.data;
 
 import java.beans.PropertyChangeEvent;
@@ -41,10 +40,16 @@ import org.apache.commons.io.FilenameUtils;
  * @author kai
  */
 public class Preferences implements DatabaseSettings {
+
     private Logger log = Logger.getLogger(getClass().getName());
     private String databaseLocation;
     private String relativeDatabaseLocation;
     private String basedir;
+    private String custom1;
+    private String custom2;
+    private String custom3;
+    private String custom4;
+    private String custom5;
 
     public Preferences() {
         log.setLevel(Level.FINE);
@@ -52,14 +57,14 @@ public class Preferences implements DatabaseSettings {
         log.info("Detected basedir: " + basedir);
         load();
     }
-    
+
     private String getBasedir() {
         String s = getClass().getResource("Preferences.class").getPath();
         if (s.endsWith("modules\\org-kaiec-retro-data.jar!\\org\\kaiec\\retro\\data\\Preferences.class")) {
-            s = s.substring(0,s.length()-"modules\\org-kaiec-retro-data.jar!\\org\\kaiec\\retro\\data\\Preferences.class".length());
+            s = s.substring(0, s.length() - "modules\\org-kaiec-retro-data.jar!\\org\\kaiec\\retro\\data\\Preferences.class".length());
             log.fine("Path detection, JAR URI, Windows");
         } else if (s.endsWith("modules/org-kaiec-retro-data.jar!/org/kaiec/retro/data/Preferences.class")) {
-            s = s.substring(0,s.length()-"modules/org-kaiec-retro-data.jar!/org/kaiec/retro/data/Preferences.class".length());        
+            s = s.substring(0, s.length() - "modules/org-kaiec-retro-data.jar!/org/kaiec/retro/data/Preferences.class".length());
             log.fine("Path detection, JAR URI, UNIX");
         } else {
             log.fine("Path detection, Fallback");
@@ -73,8 +78,6 @@ public class Preferences implements DatabaseSettings {
         }
         return f.getAbsolutePath();
     }
-
-
 
     public String getDatabaseLocation() {
         return databaseLocation;
@@ -91,7 +94,7 @@ public class Preferences implements DatabaseSettings {
         firePropertyChangeEvent(DATABASE_LOCATION, oldValue, this.databaseLocation);
     }
 
-     public void setRelativeDatabaseLocation(String relDatabaseLocation) {
+    public void setRelativeDatabaseLocation(String relDatabaseLocation) {
         File f = new File(relDatabaseLocation);
         try {
             setDatabaseLocation(f.getCanonicalPath());
@@ -100,22 +103,73 @@ public class Preferences implements DatabaseSettings {
         }
     }
 
-   
+    public String getCustom1() {
+        return custom1;
+    }
+
+    public void setCustom1(String custom1) {
+        this.custom1 = custom1;
+    }
+
+    public String getCustom2() {
+        return custom2;
+    }
+
+    public void setCustom2(String custom2) {
+        this.custom2 = custom2;
+    }
+
+    public String getCustom3() {
+        return custom3;
+    }
+
+    public void setCustom3(String custom3) {
+        this.custom3 = custom3;
+    }
+
+    public String getCustom4() {
+        return custom4;
+    }
+
+    public void setCustom4(String custom4) {
+        this.custom4 = custom4;
+    }
+
+    public String getCustom5() {
+        return custom5;
+    }
+
+    public void setCustom5(String custom5) {
+        this.custom5 = custom5;
+    }
+
     private final static String DATABASE_LOCATION = "databaseLocation";
     private final static String REL_DATABASE_LOCATION = "relDatabaseLocation";
-    
+
+    private final static String CUSTOM1 = "custom1";
+    private final static String CUSTOM2 = "custom2";
+    private final static String CUSTOM3 = "custom3";
+    private final static String CUSTOM4 = "custom4";
+    private final static String CUSTOM5 = "custom5";
+    public final static String HIDE_CUSTOM_FIELD = "HIDE";
+
     public void load() {
         // java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(getClass());
         java.util.Properties prefs = new Properties();
         try {
-                prefs.load(new FileInputStream(new File(basedir + File.separator + "_prefs")));
+            prefs.load(new FileInputStream(new File(basedir + File.separator + "_prefs")));
         } catch (FileNotFoundException ex) {
-                log.info("_prefs not found, using defaults.");
-                // throw new RuntimeException("Error loading preferences: " + ex, ex);
+            log.info("_prefs not found, using defaults.");
+            // throw new RuntimeException("Error loading preferences: " + ex, ex);
         } catch (IOException ex) {
-                throw new RuntimeException("Error loading preferences: " + ex, ex);
+            throw new RuntimeException("Error loading preferences: " + ex, ex);
         }
         setRelativeDatabaseLocation(prefs.getProperty(REL_DATABASE_LOCATION, "defaultdb" + File.separator + "defaultdb"));
+        setCustom1(prefs.getProperty(CUSTOM1, HIDE_CUSTOM_FIELD));
+        setCustom2(prefs.getProperty(CUSTOM2, HIDE_CUSTOM_FIELD));
+        setCustom3(prefs.getProperty(CUSTOM3, HIDE_CUSTOM_FIELD));
+        setCustom4(prefs.getProperty(CUSTOM4, HIDE_CUSTOM_FIELD));
+        setCustom5(prefs.getProperty(CUSTOM5, HIDE_CUSTOM_FIELD));
     }
 
     public void save() {
@@ -123,11 +177,16 @@ public class Preferences implements DatabaseSettings {
         java.util.Properties prefs = new Properties();
         prefs.put(DATABASE_LOCATION, getDatabaseLocation());
         prefs.put(REL_DATABASE_LOCATION, getRelativeDatabaseLocation());
-            try {
-                prefs.store(new FileOutputStream(new File(basedir + File.separator + "_prefs")), "");
-            } catch (IOException ex) {
+        prefs.put(CUSTOM1, getCustom1());
+        prefs.put(CUSTOM2, getCustom2());
+        prefs.put(CUSTOM3, getCustom3());
+        prefs.put(CUSTOM4, getCustom4());
+        prefs.put(CUSTOM5, getCustom5());
+        try {
+            prefs.store(new FileOutputStream(new File(basedir + File.separator + "_prefs")), "");
+        } catch (IOException ex) {
             throw new RuntimeException("Error saving preferences: " + ex, ex);
-            }
+        }
     }
 
     public String getConnectionUrl() {
@@ -135,6 +194,7 @@ public class Preferences implements DatabaseSettings {
     }
 
     private List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
+
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         listeners.add(listener);
     }
@@ -142,14 +202,17 @@ public class Preferences implements DatabaseSettings {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         listeners.remove(listener);
     }
+
     private void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
-        for (PropertyChangeListener listener:listeners) {
+        for (PropertyChangeListener listener : listeners) {
             listener.propertyChange(new PropertyChangeEvent(this, name, oldValue, newValue));
         }
     }
-    
-     public static String getRelativePath(String targetPath, String basePath, String pathSeparator) {
-        if (pathSeparator==null) pathSeparator = File.separator;
+
+    public static String getRelativePath(String targetPath, String basePath, String pathSeparator) {
+        if (pathSeparator == null) {
+            pathSeparator = File.separator;
+        }
         // Normalize the paths
         String normalizedTargetPath = FilenameUtils.normalizeNoEndSeparator(targetPath);
         String normalizedBasePath = FilenameUtils.normalizeNoEndSeparator(basePath);
@@ -187,7 +250,7 @@ public class Preferences implements DatabaseSettings {
             // These paths cannot be relativized.
             throw new PathResolutionException("No common path element found for '" + normalizedTargetPath + "' and '" + normalizedBasePath
                     + "'");
-        }   
+        }
 
         // The number of directories we have to backtrack depends on whether the base is a file or a dir
         // For example, the relative path from
@@ -223,14 +286,11 @@ public class Preferences implements DatabaseSettings {
         return relative.toString();
     }
 
-
     static class PathResolutionException extends RuntimeException {
+
         PathResolutionException(String msg) {
             super(msg);
         }
-    }    
-
+    }
 
 }
-
-

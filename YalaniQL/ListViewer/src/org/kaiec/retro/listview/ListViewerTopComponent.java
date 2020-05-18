@@ -27,8 +27,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -52,6 +50,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.kaiec.retro.data.EventLog;
+import org.kaiec.retro.data.HibernateUtil;
+import org.kaiec.retro.data.Preferences;
 import org.kaiec.retro.data.Record;
 import org.kaiec.retro.data.RecordList;
 import org.openide.util.NbBundle;
@@ -69,208 +69,238 @@ import org.openide.util.lookup.InstanceContent;
  * Top component which displays something.
  */
 @ConvertAsProperties(dtd = "-//org.kaiec.retro.listview//ListViewer//EN",
-autostore = false)
+	autostore = false)
 public final class ListViewerTopComponent extends TopComponent {
 
-    private static ListViewerTopComponent instance;
-    /** path to the icon used by the component and its open action */
+	private static ListViewerTopComponent instance;
+	/**
+	 * path to the icon used by the component and its open action
+	 */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
-    private static final String PREFERRED_ID = "ListViewerTopComponent";
-    private FilterConfigPanel filterConfigPanel;
-    private JFrame filterConfigWindow;
-    private JFrame colorConfigWindow;
-    private ColorConfigPanel colorConfigPanel;
-    private InstanceContent instanceContent = new InstanceContent();
-    private Lookup.Result<Record> result;
-    private Record currentLookup;
-    
-    ResourceBundle i18n = java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle");
+	private static final String PREFERRED_ID = "ListViewerTopComponent";
+	private FilterConfigPanel filterConfigPanel;
+	private JFrame filterConfigWindow;
+	private JFrame colorConfigWindow;
+	private ColorConfigPanel colorConfigPanel;
+	private InstanceContent instanceContent = new InstanceContent();
+	private Lookup.Result<Record> result;
+	private Record currentLookup;
 
-    public ListViewerTopComponent() {
-        initComponents();
-        UIManager.put("Tooltip.background", new Color(255, 255, 255));
-        setName(NbBundle.getMessage(ListViewerTopComponent.class, "CTL_ListViewerTopComponent"));
-        // setToolTipText(NbBundle.getMessage(ListViewerTopComponent.class, "HINT_ListViewerTopComponent"));
-        // setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        ToolTipManager.sharedInstance().setInitialDelay(0);
-        ToolTipManager.sharedInstance().setDismissDelay(100000);
+	ResourceBundle i18n = java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle");
 
+	public ListViewerTopComponent() {
+		initComponents();
+		UIManager.put("Tooltip.background", new Color(255, 255, 255));
+		setName(NbBundle.getMessage(ListViewerTopComponent.class, "CTL_ListViewerTopComponent"));
+		// setToolTipText(NbBundle.getMessage(ListViewerTopComponent.class, "HINT_ListViewerTopComponent"));
+		// setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+		ToolTipManager.sharedInstance().setInitialDelay(0);
+		ToolTipManager.sharedInstance().setDismissDelay(100000);
 
-        jTable1.setModel(new ListTableModel(RecordList.getInstance()));
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jTable1.getModel());
+		jTable1.setModel(new ListTableModel(RecordList.getInstance()));
+		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jTable1.getModel());
 //        sorter.setComparator(ListTableModel.COL_UPDATED, new Comparator<String>() {
 //
 //            public int compare(String o1, String o2) {
 //            }
 //        });
-        jTable1.setRowSorter(sorter);
-        sorter.addRowSorterListener(new RowSorterListener() {
+		jTable1.setRowSorter(sorter);
+		sorter.addRowSorterListener(new RowSorterListener() {
 
-            public void sorterChanged(RowSorterEvent e) {
-                jTable1.repaint();
-            }
-        });
+			public void sorterChanged(RowSorterEvent e) {
+				jTable1.repaint();
+			}
+		});
+		
 
-        String delim2 = Character.toString((char) 31);
-        // String delim2 = ";";
-        
-        filterConfigPanel = new FilterConfigPanel(this, (TableRowSorter<TableModel>) jTable1.getRowSorter());
-        filterConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.filterConfigButton.text"));
-        filterConfigWindow.setVisible(false);
-        filterConfigWindow.setSize(600, 400);
-        filterConfigWindow.add(filterConfigPanel);
-        filterConfigWindow.addWindowFocusListener(new WindowAdapter() {
+		String delim2 = Character.toString((char) 31);
+		// String delim2 = ";";
 
-            @Override
-            public void windowGainedFocus(WindowEvent e) {
-                EventLog event = EventLog.createEvent(EventLog.GOTFOCUS);
-                event.setType2("FILTERCONF");
-            }
+		filterConfigPanel = new FilterConfigPanel(this, (TableRowSorter<TableModel>) jTable1.getRowSorter());
+		filterConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.filterConfigButton.text"));
+		filterConfigWindow.setVisible(false);
+		filterConfigWindow.setSize(600, 400);
+		filterConfigWindow.add(filterConfigPanel);
+		filterConfigWindow.addWindowFocusListener(new WindowAdapter() {
 
-            @Override
-            public void windowLostFocus(WindowEvent e) {
-                EventLog event = EventLog.createEvent(EventLog.LOSTFOCUS);
-                event.setType2("FILTERCONF");
-            }
-        });
-        colorConfigPanel = new ColorConfigPanel();
-        colorConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.rvkColoButton.text"));
-        colorConfigWindow.setVisible(false);
-        colorConfigWindow.setSize(600, 400);
-        colorConfigWindow.add(colorConfigPanel);
-        colorConfigWindow.addWindowFocusListener(new WindowAdapter() {
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				EventLog event = EventLog.createEvent(EventLog.GOTFOCUS);
+				event.setType2("FILTERCONF");
+			}
 
-            @Override
-            public void windowGainedFocus(WindowEvent e) {
-                EventLog event = EventLog.createEvent(EventLog.GOTFOCUS);
-                event.setType2("COLORCONF");
-            }
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				EventLog event = EventLog.createEvent(EventLog.LOSTFOCUS);
+				event.setType2("FILTERCONF");
+			}
+		});
+		colorConfigPanel = new ColorConfigPanel();
+		colorConfigWindow = new JFrame(NbBundle.getMessage(ListViewerTopComponent.class, "ListViewerTopComponent.rvkColoButton.text"));
+		colorConfigWindow.setVisible(false);
+		colorConfigWindow.setSize(600, 400);
+		colorConfigWindow.add(colorConfigPanel);
+		colorConfigWindow.addWindowFocusListener(new WindowAdapter() {
 
-            @Override
-            public void windowLostFocus(WindowEvent e) {
-                EventLog event = EventLog.createEvent(EventLog.LOSTFOCUS);
-                event.setType2("COLORCONF");
-            }
-        });
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				EventLog event = EventLog.createEvent(EventLog.GOTFOCUS);
+				event.setType2("COLORCONF");
+			}
 
-        ComboTableCellRenderer renderer = new ComboTableCellRenderer();
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				EventLog event = EventLog.createEvent(EventLog.LOSTFOCUS);
+				event.setType2("COLORCONF");
+			}
+		});
 
-        TableCellEditor editor = new ComboCellEditor(renderer);
+		ComboTableCellRenderer renderer = new ComboTableCellRenderer();
 
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellRenderer(new MultilineTableCellRenderer(delim2, filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellEditor(new MultilineTableCellRenderer(delim2, filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_TITLE).setCellRenderer(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_TITLE).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_SERIES).setCellRenderer(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_SERIES).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_EDITION).setCellRenderer(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_EDITION).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_LANGUAGE).setCellRenderer(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_LANGUAGE).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_YEAR).setCellRenderer(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_YEAR).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellRenderer(new MultilineTableCellRenderer(delim2, filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellEditor(new MultilineTableCellRenderer(delim2, filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_SIG).setCellRenderer(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_SIG).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellRenderer(new RVKEditor(jTable1, delim2, colorConfigPanel));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellEditor(new RVKEditor(jTable1, delim2, colorConfigPanel));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_EDIT).setCellRenderer(renderer);
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_EDIT).setCellEditor(editor);
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_UPDATED).setCellRenderer(new MultilineTableCellRenderer(filterValue));
-        jTable1.getColumnModel().getColumn(ListTableModel.COL_UPDATED).setCellEditor(new MultilineTableCellRenderer(filterValue));
-        jSlider1.setValue(30);
+		TableCellEditor editor = new ComboCellEditor(renderer);
 
-        initQuickFilter();
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellRenderer(new MultilineTableCellRenderer(delim2, filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_AUTHOR).setCellEditor(new MultilineTableCellRenderer(delim2, filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_TITLE).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_TITLE).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_SERIES).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_SERIES).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_EDITION).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_EDITION).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_LANGUAGE).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_LANGUAGE).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_YEAR).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_YEAR).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellRenderer(new MultilineTableCellRenderer(delim2, filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_KEYWORDS).setCellEditor(new MultilineTableCellRenderer(delim2, filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_SIG).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_SIG).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM1).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM1).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM2).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM2).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM3).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM3).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM4).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM4).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM5).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM5).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellRenderer(new RVKEditor(jTable1, delim2, colorConfigPanel));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_CLASSES).setCellEditor(new RVKEditor(jTable1, delim2, colorConfigPanel));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_EDIT).setCellRenderer(renderer);
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_EDIT).setCellEditor(editor);
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_UPDATED).setCellRenderer(new MultilineTableCellRenderer(filterValue));
+		jTable1.getColumnModel().getColumn(ListTableModel.COL_UPDATED).setCellEditor(new MultilineTableCellRenderer(filterValue));
+		jSlider1.setValue(30);
 
-        filterValue.getDocument().addDocumentListener(new DocumentListener() {
+		
+		Preferences prefs = HibernateUtil.getInstance().getPreferences();
+		if (prefs.getCustom5().equals(Preferences.HIDE_CUSTOM_FIELD)) {
+			jTable1.removeColumn(jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM5));
+		}
+		if (prefs.getCustom4().equals(Preferences.HIDE_CUSTOM_FIELD)) {
+			jTable1.removeColumn(jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM4));
+		}
+		if (prefs.getCustom3().equals(Preferences.HIDE_CUSTOM_FIELD)) {
+			jTable1.removeColumn(jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM3));
+		}
+		if (prefs.getCustom2().equals(Preferences.HIDE_CUSTOM_FIELD)) {
+			jTable1.removeColumn(jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM2));
+		}
+		if (prefs.getCustom1().equals(Preferences.HIDE_CUSTOM_FIELD)) {
+			jTable1.removeColumn(jTable1.getColumnModel().getColumn(ListTableModel.COL_CUSTOM1));
+		}
+		
+		initQuickFilter();
 
-            public void insertUpdate(DocumentEvent e) {
-                if (quickFilterButton.isSelected()) {
-                    applyFilters();
-                }
-            }
+		filterValue.getDocument().addDocumentListener(new DocumentListener() {
 
-            public void removeUpdate(DocumentEvent e) {
-                if (quickFilterButton.isSelected()) {
-                    applyFilters();
-                }
-            }
+			public void insertUpdate(DocumentEvent e) {
+				if (quickFilterButton.isSelected()) {
+					applyFilters();
+				}
+			}
 
-            public void changedUpdate(DocumentEvent e) {
-                if (quickFilterButton.isSelected()) {
-                    applyFilters();
-                }
-            }
-        });
+			public void removeUpdate(DocumentEvent e) {
+				if (quickFilterButton.isSelected()) {
+					applyFilters();
+				}
+			}
 
-        filterColumn.addItemListener(new ItemListener() {
+			public void changedUpdate(DocumentEvent e) {
+				if (quickFilterButton.isSelected()) {
+					applyFilters();
+				}
+			}
+		});
 
-            public void itemStateChanged(ItemEvent e) {
-                if (quickFilterButton.isSelected()) {
-                    applyFilters();
-                }
-            }
-        });
-        filterCrit.addItemListener(new ItemListener() {
+		filterColumn.addItemListener(new ItemListener() {
 
-            public void itemStateChanged(ItemEvent e) {
-                if (quickFilterButton.isSelected()) {
-                    applyFilters();
-                }
-            }
-        });
-        jTable1.addKeyListener(new KeyListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (quickFilterButton.isSelected()) {
+					applyFilters();
+				}
+			}
+		});
+		filterCrit.addItemListener(new ItemListener() {
 
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == ' ') {
-                    if (jTable1.isCellEditable(jTable1.getSelectedRow(), ListTableModel.COL_EDIT)) {
-                        jTable1.editCellAt(jTable1.getSelectedRow(), ListTableModel.COL_EDIT);
-                        jTable1.changeSelection(jTable1.getSelectedRow(), ListTableModel.COL_EDIT, false, false);
-                        ((ComboCellEditor) jTable1.getCellEditor()).focus();
-                    }
-                }
-            }
+			public void itemStateChanged(ItemEvent e) {
+				if (quickFilterButton.isSelected()) {
+					applyFilters();
+				}
+			}
+		});
+		jTable1.addKeyListener(new KeyListener() {
 
-            public void keyPressed(KeyEvent e) {
-            }
+			public void keyTyped(KeyEvent e) {
+				if (e.getKeyChar() == ' ') {
+					if (jTable1.isCellEditable(jTable1.getSelectedRow(), ListTableModel.COL_EDIT)) {
+						jTable1.editCellAt(jTable1.getSelectedRow(), ListTableModel.COL_EDIT);
+						jTable1.changeSelection(jTable1.getSelectedRow(), ListTableModel.COL_EDIT, false, false);
+						((ComboCellEditor) jTable1.getCellEditor()).focus();
+					}
+				}
+			}
 
-            public void keyReleased(KeyEvent e) {
-            }
-        });
+			public void keyPressed(KeyEvent e) {
+			}
 
-        jTable1.getRowSorter().addRowSorterListener(new RowSorterListener() {
+			public void keyReleased(KeyEvent e) {
+			}
+		});
 
-            public void sorterChanged(RowSorterEvent e) {
-                updateStatus();
-            }
-        });
-        updateStatus();
-        instanceContent.add(this);
-        associateLookup(new AbstractLookup(instanceContent));
-        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		jTable1.getRowSorter().addRowSorterListener(new RowSorterListener() {
 
-            public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting()) {
-                    return;
-                }
-                if (currentLookup != null) {
-                    instanceContent.remove(currentLookup);
-                }
-                if (jTable1.getSelectedRow() != -1) {
-                    ListTableModel model = (ListTableModel) jTable1.getModel();
-                    currentLookup = model.getRecord(jTable1.convertRowIndexToModel(jTable1.getSelectedRow()));
-                    instanceContent.add(currentLookup);
-                    // System.out.println("Lookup set: " + currentLookup.getPpn());
-                    if (jTable1.getCellEditor() != null && jTable1.getEditingRow() != jTable1.getSelectedRow()) {
-                        jTable1.getCellEditor().stopCellEditing();
-                    }
-                    updateStatus();
-                }
-            }
-        });
+			public void sorterChanged(RowSorterEvent e) {
+				updateStatus();
+			}
+		});
+		updateStatus();
+		instanceContent.add(this);
+		associateLookup(new AbstractLookup(instanceContent));
+		jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
-        jTable1.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					return;
+				}
+				if (currentLookup != null) {
+					instanceContent.remove(currentLookup);
+				}
+				if (jTable1.getSelectedRow() != -1) {
+					ListTableModel model = (ListTableModel) jTable1.getModel();
+					currentLookup = model.getRecord(jTable1.convertRowIndexToModel(jTable1.getSelectedRow()));
+					instanceContent.add(currentLookup);
+					// System.out.println("Lookup set: " + currentLookup.getPpn());
+					if (jTable1.getCellEditor() != null && jTable1.getEditingRow() != jTable1.getSelectedRow()) {
+						jTable1.getCellEditor().stopCellEditing();
+					}
+					updateStatus();
+				}
+			}
+		});
+
+		jTable1.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //        jTable1.addMouseListener(new MouseAdapter() {
 //
 //            @Override
@@ -312,202 +342,202 @@ public final class ListViewerTopComponent extends TopComponent {
 //            }
 //        });
 
-        WindowManager.getDefault().getMainWindow().addWindowFocusListener(new WindowAdapter() {
+		WindowManager.getDefault().getMainWindow().addWindowFocusListener(new WindowAdapter() {
 
-            @Override
-            public void windowGainedFocus(WindowEvent e) {
-                EventLog event = EventLog.createEvent(EventLog.GOTFOCUS);
-                event.setType2("MAIN");
-            }
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				EventLog event = EventLog.createEvent(EventLog.GOTFOCUS);
+				event.setType2("MAIN");
+			}
 
-            @Override
-            public void windowLostFocus(WindowEvent e) {
-                EventLog event = EventLog.createEvent(EventLog.LOSTFOCUS);
-                event.setType2("MAIN");
-            }
-        });
-        new Timer().schedule(new TimerTask() {
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				EventLog event = EventLog.createEvent(EventLog.LOSTFOCUS);
+				event.setType2("MAIN");
+			}
+		});
+		new Timer().schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                RecordList.getInstance().saveBackup();
-            }
-        }, 1800000, 1800000);
+			@Override
+			public void run() {
+				RecordList.getInstance().saveBackup();
+			}
+		}, 1800000, 1800000);
 
+		memWarningLabel.setVisible(false);
 
-        memWarningLabel.setVisible(false);
-        
-        MemoryWarningSystem.setPercentageUsageThreshold(0.8);
+		MemoryWarningSystem.setPercentageUsageThreshold(0.8);
 
-        MemoryWarningSystem mws = new MemoryWarningSystem();
-        mws.addListener(new MemoryWarningSystem.Listener() {
+		MemoryWarningSystem mws = new MemoryWarningSystem();
+		mws.addListener(new MemoryWarningSystem.Listener() {
 
-            public void memoryUsageLow(long usedMemory, long maxMemory) {
-                memWarningLabel.setVisible(true);
-                NotifyDescriptor d =
-                        new NotifyDescriptor.Message(java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("low-memory-warning"), NotifyDescriptor.INFORMATION_MESSAGE);
-                DialogDisplayer.getDefault().notifyLater(d);
-            }
-        });
+			public void memoryUsageLow(long usedMemory, long maxMemory) {
+				memWarningLabel.setVisible(true);
+				NotifyDescriptor d
+					= new NotifyDescriptor.Message(java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("low-memory-warning"), NotifyDescriptor.INFORMATION_MESSAGE);
+				DialogDisplayer.getDefault().notifyLater(d);
+			}
+		});
 
-        
+	}
 
-    }
+	private void initQuickFilter() {
+		filterColumn.removeAllItems();
+		// Skip last column that contains the timestamp, this is
+		// not usable for filters. See issue #2
+		for (int i = 0; i < jTable1.getModel().getColumnCount() - 1; i++) {
+			String name = jTable1.getModel().getColumnName(i);
+			if (name.equals(Preferences.HIDE_CUSTOM_FIELD)) continue;
+			filterColumn.addItem(name);
+		}
+		filterColumn.addItem(i18n.getString("anywhere"));
+		filterCrit.removeAllItems();
+		filterCrit.addItem(i18n.getString("filter-contains"));
+		filterCrit.addItem(i18n.getString("filter-contains-not"));
+		filterCrit.addItem(i18n.getString("filter-begins-with"));
+		filterCrit.addItem(i18n.getString("filter-is"));
+		filterCrit.addItem(i18n.getString("filter-is-not"));
+		filterCrit.addItem(i18n.getString("filter-smaller"));
+		filterCrit.addItem(i18n.getString("filter-bigger"));
+		filterCrit.addItem(i18n.getString("filter-wordcount"));
+		filterValue.setText("");
+	}
 
-    private void initQuickFilter() {
-        filterColumn.removeAllItems();
-        // Skip last column that contains the timestamp, this is
-        // not usable for filters. See issue #2
-        for (int i = 0; i < jTable1.getModel().getColumnCount() - 1; i++) {
-            filterColumn.addItem(jTable1.getModel().getColumnName(i));
-        }
-        filterColumn.addItem(i18n.getString("anywhere"));
-        filterCrit.removeAllItems();
-        filterCrit.addItem(i18n.getString("filter-contains"));
-        filterCrit.addItem(i18n.getString("filter-contains-not"));
-        filterCrit.addItem(i18n.getString("filter-begins-with"));
-        filterCrit.addItem(i18n.getString("filter-is"));
-        filterCrit.addItem(i18n.getString("filter-is-not"));
-        filterCrit.addItem(i18n.getString("filter-smaller"));
-        filterCrit.addItem(i18n.getString("filter-bigger"));
-        filterCrit.addItem(i18n.getString("filter-wordcount"));
-        filterValue.setText("");
-    }
+	public RowFilter<Object, Object> getRowFilter() {
+		RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
 
-    public RowFilter<Object, Object> getRowFilter() {
-        RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+			public boolean include(Entry entry) {
 
-            public boolean include(Entry entry) {
+				// Irgendwo Filter
+				if (filterColumn.getSelectedIndex() == filterColumn.getItemCount() - 1) {
+					for (int i = 0; i < filterColumn.getItemCount() - 1; i++) {
+						if (includeByColumn(entry, i)) {
+							return true;
+						}
+					}
+					return false;
+				}
 
-                // Irgendwo Filter
-                if (filterColumn.getSelectedIndex() == filterColumn.getItemCount() - 1) {
-                    for (int i = 0; i < filterColumn.getItemCount() - 1; i++) {
-                        if (includeByColumn(entry, i)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
+				// Normale Filter
+				return includeByColumn(entry, filterColumn.getSelectedIndex());
+			}
+		};
+		return filter;
+	}
 
-                // Normale Filter
-                return includeByColumn(entry, filterColumn.getSelectedIndex());
-            }
-        };
-        return filter;
-    }
+	private boolean includeByColumn(Entry entry, int column) {
+		String value = null;
+		if (entry.getValue(column) != null) {
+			value = entry.getValue(column).toString();
+		}
+		if (value == null) {
+			value = "";
+		}
+		value = value.toLowerCase();
+		if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains"))) {
+			return value.indexOf(filterValue.getText().toLowerCase()) != -1;
+		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains-not"))) {
+			return value.indexOf(filterValue.getText().toLowerCase()) == -1;
+		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-begins-with"))) {
+			return value.startsWith(filterValue.getText().toLowerCase());
+		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is"))) {
+			return value.equals(filterValue.getText().toLowerCase());
+		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is-not"))) {
+			return !value.equals(filterValue.getText().toLowerCase());
+		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-smaller"))) {
+			return value.compareTo(filterValue.getText().toLowerCase()) < 0;
+		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-bigger"))) {
+			return value.compareTo(filterValue.getText().toLowerCase()) > 0;
+		} else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-wordcount"))) {
+			try {
+				int number = Integer.parseInt(filterValue.getText());
+				if (number == 0 && value.trim().length() == 0) {
+					return true;
+				}
+				boolean rvk = filterColumn.getSelectedItem().equals(((ListTableModel) jTable1.getModel()).getColumnName(ListTableModel.COL_CLASSES));
+				if (rvk) {
+					if (number > 1) {
+						return value.split(Character.toString((char) 31)).length == number;
+					} else if (number == 1) {
+						return (value.trim().length() > 0) && (value.indexOf(31) == -1);
+					}
+					return false;
+				} else {
+					if (number > 1) {
+						return value.split(" ").length == number;
+					} else if (number == 1) {
+						return (value.trim().length() > 0) && (value.indexOf(" ") == -1);
+					}
+					return false;
+				}
 
-    private boolean includeByColumn(Entry entry, int column) {
-        String value = null;
-        if (entry.getValue(column) != null) {
-            value = entry.getValue(column).toString();
-        }
-        if (value == null) {
-            value = "";
-        }
-        value = value.toLowerCase();
-         if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains"))) {
-            return value.indexOf(filterValue.getText().toLowerCase()) != -1;
-        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-contains-not"))) {
-            return value.indexOf(filterValue.getText().toLowerCase()) == -1;
-        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-begins-with"))) {
-            return value.startsWith(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is"))) {
-            return value.equals(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-is-not"))) {
-            return !value.equals(filterValue.getText().toLowerCase());
-        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-smaller"))) {
-            return value.compareTo(filterValue.getText().toLowerCase()) < 0;
-        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-bigger"))) {
-            return value.compareTo(filterValue.getText().toLowerCase()) > 0;
-        } else if (filterCrit.getSelectedItem().equals(i18n.getString("filter-wordcount"))) {
-            try {
-                int number = Integer.parseInt(filterValue.getText());
-                if (number==0 && value.trim().length()==0) return true;
-                boolean rvk = filterColumn.getSelectedItem().equals(((ListTableModel) jTable1.getModel()).getColumnName(ListTableModel.COL_CLASSES));
-                if (rvk) {
-                    if (number > 1) {
-                        return value.split(Character.toString((char) 31)).length == number;
-                    } else if (number == 1) {
-                        return (value.trim().length() > 0) && (value.indexOf(31) == -1);
-                    }
-                    return false;
-                }
-                else {
-                    if (number > 1) {
-                        return value.split(" ").length == number;
-                    } else if (number == 1) {
-                        return (value.trim().length() > 0) && (value.indexOf(" ") == -1);
-                    }
-                    return false;
-                }
-                
-            } catch (NumberFormatException nfe) {
-            }
-        }
-        return true;
+			} catch (NumberFormatException nfe) {
+			}
+		}
+		return true;
 
-    }
+	}
 
-    public JTable getTable() {
-        return jTable1;
-    }
+	public JTable getTable() {
+		return jTable1;
+	}
 
-    public int getSelectedRow() {
-        return jTable1.getSelectedRow();
-    }
+	public int getSelectedRow() {
+		return jTable1.getSelectedRow();
+	}
 
-    public void selectRow(int i) {
-        if (i >= 0 && i < jTable1.getRowCount()) {
-            jTable1.getSelectionModel().setSelectionInterval(i, i);
-        }
-    }
+	public void selectRow(int i) {
+		if (i >= 0 && i < jTable1.getRowCount()) {
+			jTable1.getSelectionModel().setSelectionInterval(i, i);
+		}
+	}
 
-    public Record getSelectedRecord() {
-        int row = getSelectedRow();
-        if (row == -1) {
-            return null;
-        }
-        int mr = jTable1.convertRowIndexToModel(row);
-        return ((ListTableModel) jTable1.getModel()).getRecord(mr);
-    }
+	public Record getSelectedRecord() {
+		int row = getSelectedRow();
+		if (row == -1) {
+			return null;
+		}
+		int mr = jTable1.convertRowIndexToModel(row);
+		return ((ListTableModel) jTable1.getModel()).getRecord(mr);
+	}
 
-    public void stopEditing() {
-        if (jTable1.getCellEditor() != null) {
-            jTable1.getCellEditor().stopCellEditing();
+	public void stopEditing() {
+		if (jTable1.getCellEditor() != null) {
+			jTable1.getCellEditor().stopCellEditing();
 
-        }
-    }
+		}
+	}
 
-    private void updateStatus() {
-        int context = 0;
-        int todo = 0;
-        int count = jTable1.getRowSorter().getViewRowCount();
-        ListTableModel model = (ListTableModel) jTable1.getModel();
-        for (int i = 0; i < count; i++) {
-            Record rec = model.getRecord(jTable1.convertRowIndexToModel(i));
-            if (rec.isContext()) {
-                context++;
-            }
-            if (!rec.isContext() && rec.getAssignment().isEmpty()) {
-                todo++;
-            }
-        }
-        int toedit = count - context;
-        int done = toedit - todo;
-        float percentage = ((float) Math.round((((float) done) / toedit) * 1000)) / 10;
-        StringBuffer status = new StringBuffer();
-        status.append("Rows: ").append(count).append(" (").append(toedit).append("/").append(context).append(")");
-        status.append(" Todo/Done: " + todo + "/" + done + " (" + percentage + "%)");
-        status.append(" Row #: " + (jTable1.getSelectedRow() + 1));
-        statusLabel.setText(status.toString());
+	private void updateStatus() {
+		int context = 0;
+		int todo = 0;
+		int count = jTable1.getRowSorter().getViewRowCount();
+		ListTableModel model = (ListTableModel) jTable1.getModel();
+		for (int i = 0; i < count; i++) {
+			Record rec = model.getRecord(jTable1.convertRowIndexToModel(i));
+			if (rec.isContext()) {
+				context++;
+			}
+			if (!rec.isContext() && rec.getAssignment().isEmpty()) {
+				todo++;
+			}
+		}
+		int toedit = count - context;
+		int done = toedit - todo;
+		float percentage = ((float) Math.round((((float) done) / toedit) * 1000)) / 10;
+		StringBuffer status = new StringBuffer();
+		status.append("Rows: ").append(count).append(" (").append(toedit).append("/").append(context).append(")");
+		status.append(" Todo/Done: " + todo + "/" + done + " (" + percentage + "%)");
+		status.append(" Row #: " + (jTable1.getSelectedRow() + 1));
+		statusLabel.setText(status.toString());
 
-    }
+	}
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
+	/**
+	 * This method is called from within the constructor to initialize the
+	 * form. WARNING: Do NOT modify this code. The content of this method is
+	 * always regenerated by the Form Editor.
+	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -727,141 +757,139 @@ public final class ListViewerTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
-        jTable1.setRowHeight(jSlider1.getValue());
+	    jTable1.setRowHeight(jSlider1.getValue());
     }//GEN-LAST:event_jSlider1StateChanged
 
     private void filterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterButtonActionPerformed
-        applyFilters();
+	    applyFilters();
     }//GEN-LAST:event_filterButtonActionPerformed
 
     private void filterConfigButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterConfigButtonActionPerformed
-        filterConfigWindow.setVisible(true);
+	    filterConfigWindow.setVisible(true);
     }//GEN-LAST:event_filterConfigButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        for (int r = 0; r < jTable1.getRowCount(); r++) {
-            // Get the preferred height
-            int h = getPreferredRowHeight(jTable1, r, 2);
-            // Now set the row height using the preferred height
-            if (jTable1.getRowHeight(r) != h) {
-                jTable1.setRowHeight(r, h);
-            }
-        }
+	    for (int r = 0; r < jTable1.getRowCount(); r++) {
+		    // Get the preferred height
+		    int h = getPreferredRowHeight(jTable1, r, 2);
+		    // Now set the row height using the preferred height
+		    if (jTable1.getRowHeight(r) != h) {
+			    jTable1.setRowHeight(r, h);
+		    }
+	    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void rvkColoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rvkColoButtonActionPerformed
-        colorConfigWindow.setVisible(true);
+	    colorConfigWindow.setVisible(true);
     }//GEN-LAST:event_rvkColoButtonActionPerformed
 
-    public String getFilterSignature() {
-        return "(" + filterColumn.getSelectedItem() + "//" + filterCrit.getSelectedItem() + "//" + filterValue.getText() + ")";
-    }
+	public String getFilterSignature() {
+		return "(" + filterColumn.getSelectedItem() + "//" + filterCrit.getSelectedItem() + "//" + filterValue.getText() + ")";
+	}
 
-    public void applyFilters() {
-        StringBuilder filterSignature = new StringBuilder();
-        List<RowFilter<Object, Object>> flist = new ArrayList<RowFilter<Object, Object>>();
+	public void applyFilters() {
+		StringBuilder filterSignature = new StringBuilder();
+		List<RowFilter<Object, Object>> flist = new ArrayList<RowFilter<Object, Object>>();
 
+		if (!(contextButton.isSelected())) {
+			flist.add(new RowFilter<Object, Object>() {
 
+				@Override
+				public boolean include(Entry<? extends Object, ? extends Object> entry) {
+					Record rec = ((ListTableModel) jTable1.getModel()).getRecord((Integer) entry.getIdentifier());
+					return !rec.isContext();
+				}
+			});
+			filterSignature.append("!context");
+		}
 
-        if (!(contextButton.isSelected())) {
-            flist.add(new RowFilter<Object, Object>() {
+		if (filterButton.isSelected()) {
+			flist.add(filterConfigPanel.getRowFilter());
+			String f = filterConfigPanel.getFilterSignature();
+			if (filterSignature.length() > 0 && f.length() > 0) {
+				filterSignature.append(" && ");
+			}
+			filterSignature.append(f);
+		}
 
-                @Override
-                public boolean include(Entry<? extends Object, ? extends Object> entry) {
-                    Record rec = ((ListTableModel) jTable1.getModel()).getRecord((Integer) entry.getIdentifier());
-                    return !rec.isContext();
-                }
-            });
-            filterSignature.append("!context");
-        }
-
-        if (filterButton.isSelected()) {
-            flist.add(filterConfigPanel.getRowFilter());
-            String f = filterConfigPanel.getFilterSignature();
-            if (filterSignature.length() > 0 && f.length() > 0) {
-                filterSignature.append(" && ");
-            }
-            filterSignature.append(f);
-        }
-
-        if (quickFilterButton.isSelected()) {
-            flist.add(getRowFilter());
-            String f = getFilterSignature();
-            if (filterSignature.length() > 0 && f.length() > 0) {
-                filterSignature.append(" && ");
-            }
-            filterSignature.append("Quick:" + f);
-        }
-        ((TableRowSorter) jTable1.getRowSorter()).setRowFilter(RowFilter.andFilter(flist));
-        EventLog event = EventLog.createEvent(EventLog.FILTER_NEW);
-        event.setMessage(filterSignature.toString());
-    }
+		if (quickFilterButton.isSelected()) {
+			flist.add(getRowFilter());
+			String f = getFilterSignature();
+			if (filterSignature.length() > 0 && f.length() > 0) {
+				filterSignature.append(" && ");
+			}
+			filterSignature.append("Quick:" + f);
+		}
+		((TableRowSorter) jTable1.getRowSorter()).setRowFilter(RowFilter.andFilter(flist));
+		EventLog event = EventLog.createEvent(EventLog.FILTER_NEW);
+		event.setMessage(filterSignature.toString());
+	}
 
     private void contextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contextButtonActionPerformed
-        applyFilters();
+	    applyFilters();
 
     }//GEN-LAST:event_contextButtonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        updateStatus();
+	    updateStatus();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void massAssignmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_massAssignmentActionPerformed
-        PicklistPanel myPanel = new PicklistPanel(new PicklistEntry());
-        NotifyDescriptor nd = new NotifyDescriptor(
-                myPanel, // instance of your panel
-                java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("mass-label-warning"), // title of the dialog
-                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
-                NotifyDescriptor.QUESTION_MESSAGE, // ... of a question type => a question mark icon
-                null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
-                // otherwise specify options as:
-                //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
-                NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+	    PicklistPanel myPanel = new PicklistPanel(new PicklistEntry());
+	    NotifyDescriptor nd = new NotifyDescriptor(
+		    myPanel, // instance of your panel
+		    java.util.ResourceBundle.getBundle("org/kaiec/retro/listview/Bundle").getString("mass-label-warning"), // title of the dialog
+		    NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+		    NotifyDescriptor.QUESTION_MESSAGE, // ... of a question type => a question mark icon
+		    null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+		    // otherwise specify options as:
+		    //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+		    NotifyDescriptor.OK_OPTION // default option is "Yes"
+	    );
 
-        // let's display the dialog now...
-        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            String assignment = myPanel.getUpdatedEntry().getValue();
-            RecordList.getInstance().setFireChanges(false);
-            for (int i = 0; i < jTable1.getRowCount(); i++) {
-                int row = jTable1.convertRowIndexToModel(i);
-                ((ListTableModel) jTable1.getModel()).setValueAt(assignment, row, ListTableModel.COL_EDIT);
-            }
-            EventLog event = EventLog.createEvent(EventLog.ASS_MASS);
-            event.setMessage(assignment);
-            RecordList.getInstance().setFireChanges(true);
-            RecordList.getInstance().datachanged();
-        }
+	    // let's display the dialog now...
+	    if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+		    String assignment = myPanel.getUpdatedEntry().getValue();
+		    RecordList.getInstance().setFireChanges(false);
+		    for (int i = 0; i < jTable1.getRowCount(); i++) {
+			    int row = jTable1.convertRowIndexToModel(i);
+			    ((ListTableModel) jTable1.getModel()).setValueAt(assignment, row, ListTableModel.COL_EDIT);
+		    }
+		    EventLog event = EventLog.createEvent(EventLog.ASS_MASS);
+		    event.setMessage(assignment);
+		    RecordList.getInstance().setFireChanges(true);
+		    RecordList.getInstance().datachanged();
+	    }
     }//GEN-LAST:event_massAssignmentActionPerformed
 
     private void quickFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quickFilterButtonActionPerformed
-        applyFilters();
+	    applyFilters();
     }//GEN-LAST:event_quickFilterButtonActionPerformed
 
 private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-    new ExportFiltered().actionPerformed(evt);
+	new ExportFiltered().actionPerformed(evt);
 }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        RecordList.getInstance().saveBackup();
+	    RecordList.getInstance().saveBackup();
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    public int getPreferredRowHeight(JTable table, int rowIndex, int margin) {
-        // Get the current default height for all rows
-        int height = table.getRowHeight();
-        // Determine highest cell in the row
+	public int getPreferredRowHeight(JTable table, int rowIndex, int margin) {
+		// Get the current default height for all rows
+		int height = table.getRowHeight();
+		// Determine highest cell in the row
 //        for (int c=0; c<table.getColumnCount(); c++) {
 //            TableCellRenderer renderer = table.getCellRenderer(rowIndex, c);
 //            Component comp = table.prepareRenderer(renderer, rowIndex, c);
 //            int h = comp.getPreferredSize().height + 2*margin;
 //            height = Math.max(height, h);
 //        }
-        TableCellRenderer renderer = table.getCellRenderer(rowIndex, ListTableModel.COL_KEYWORDS);
-        Component comp = table.prepareRenderer(renderer, rowIndex, ListTableModel.COL_KEYWORDS);
-        int h = comp.getPreferredSize().height + 2 * margin;
-        height = Math.max(height, h);
-        return h;
-    }
+		TableCellRenderer renderer = table.getCellRenderer(rowIndex, ListTableModel.COL_KEYWORDS);
+		Component comp = table.prepareRenderer(renderer, rowIndex, ListTableModel.COL_KEYWORDS);
+		int h = comp.getPreferredSize().height + 2 * margin;
+		height = Math.max(height, h);
+		return h;
+	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton contextButton;
     private javax.swing.JToggleButton filterButton;
@@ -883,74 +911,76 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
-     */
-    public static synchronized ListViewerTopComponent getDefault() {
-        if (instance == null) {
-            instance = new ListViewerTopComponent();
-        }
-        return instance;
-    }
+	/**
+	 * Gets default instance. Do not use directly: reserved for *.settings
+	 * files only, i.e. deserialization routines; otherwise you could get a
+	 * non-deserialized instance. To obtain the singleton instance, use
+	 * {@link #findInstance}.
+	 */
+	public static synchronized ListViewerTopComponent getDefault() {
+		if (instance == null) {
+			instance = new ListViewerTopComponent();
+		}
+		return instance;
+	}
 
-    /**
-     * Obtain the ListViewerTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized ListViewerTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(ListViewerTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof ListViewerTopComponent) {
-            return (ListViewerTopComponent) win;
-        }
-        Logger.getLogger(ListViewerTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
+	/**
+	 * Obtain the ListViewerTopComponent instance. Never call
+	 * {@link #getDefault} directly!
+	 */
+	public static synchronized ListViewerTopComponent findInstance() {
+		TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+		if (win == null) {
+			Logger.getLogger(ListViewerTopComponent.class.getName()).warning(
+				"Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
+			return getDefault();
+		}
+		if (win instanceof ListViewerTopComponent) {
+			return (ListViewerTopComponent) win;
+		}
+		Logger.getLogger(ListViewerTopComponent.class.getName()).warning(
+			"There seem to be multiple components with the '" + PREFERRED_ID
+			+ "' ID. That is a potential source of errors and unexpected behavior.");
+		return getDefault();
+	}
 
-    @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
-    }
+	@Override
+	public int getPersistenceType() {
+		return TopComponent.PERSISTENCE_ALWAYS;
+	}
 
-    @Override
-    public void componentOpened() {
-        // TODO add custom code on component opening
-    }
+	@Override
+	public void componentOpened() {
+		// TODO add custom code on component opening
+	}
 
-    @Override
-    public void componentClosed() {
-        // TODO add custom code on component closing
-    }
+	@Override
+	public void componentClosed() {
+		// TODO add custom code on component closing
+	}
 
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
+	void writeProperties(java.util.Properties p) {
+		// better to version settings since initial version as advocated at
+		// http://wiki.apidesign.org/wiki/PropertyFiles
+		p.setProperty("version", "1.0");
+		// TODO store your settings
+	}
 
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
-    }
+	Object readProperties(java.util.Properties p) {
+		if (instance == null) {
+			instance = this;
+		}
+		instance.readPropertiesImpl(p);
+		return instance;
+	}
 
-    private void readPropertiesImpl(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
-    }
+	private void readPropertiesImpl(java.util.Properties p) {
+		String version = p.getProperty("version");
+		// TODO read your settings according to their version
+	}
 
-    @Override
-    protected String preferredID() {
-        return PREFERRED_ID;
-    }
+	@Override
+	protected String preferredID() {
+		return PREFERRED_ID;
+	}
 }

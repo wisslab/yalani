@@ -254,10 +254,12 @@ public final class ListViewerTopComponent extends TopComponent {
 
 			public void keyTyped(KeyEvent e) {
 				if (e.getKeyChar() == ' ') {
-					if (jTable1.isCellEditable(jTable1.getSelectedRow(), ListTableModel.COL_EDIT)) {
-						jTable1.editCellAt(jTable1.getSelectedRow(), ListTableModel.COL_EDIT);
-						jTable1.changeSelection(jTable1.getSelectedRow(), ListTableModel.COL_EDIT, false, false);
-						((ComboCellEditor) jTable1.getCellEditor()).focus();
+					if (jTable1.getSelectedRow()>=0) {
+						if (jTable1.isCellEditable(jTable1.getSelectedRow(), jTable1.convertColumnIndexToView(ListTableModel.COL_EDIT))) {
+							jTable1.editCellAt(jTable1.getSelectedRow(), jTable1.convertColumnIndexToView(ListTableModel.COL_EDIT));
+							jTable1.changeSelection(jTable1.getSelectedRow(), jTable1.convertColumnIndexToView(ListTableModel.COL_EDIT), false, false);
+							((ComboCellEditor) jTable1.getCellEditor()).focus();
+						}
 					}
 				}
 			}

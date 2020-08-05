@@ -33,6 +33,7 @@ public class CloseEvent {
         for (CloseListener cl:listeners) {
             cl.closing();
         }
+	HibernateUtil.getInstance().close();
     }
 
     private static CloseEvent instance = new CloseEvent();

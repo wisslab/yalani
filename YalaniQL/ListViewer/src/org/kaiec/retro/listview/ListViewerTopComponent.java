@@ -358,14 +358,15 @@ public final class ListViewerTopComponent extends TopComponent {
 				event.setType2("MAIN");
 			}
 		});
-		new Timer().schedule(new TimerTask() {
+		// Our implementation of Hibernate Sessions is NOT THREAD-SAFE!!!
+		/* new Timer().schedule(new TimerTask() {
 
 			@Override
 			public void run() {
 				RecordList.getInstance().saveBackup();
 			}
 		}, 1800000, 1800000);
-
+		*/
 		memWarningLabel.setVisible(false);
 
 		MemoryWarningSystem.setPercentageUsageThreshold(0.8);
